@@ -84,7 +84,7 @@
       <string extracomment="ID"/>
      </property>
      <property name="text">
-      <string extracomment="ID">최공수</string>
+      <string extracomment="ID"></string>
      </property>
      <property name="maxLength">
       <number>20</number>
@@ -103,7 +103,7 @@
       <string extracomment="PW"/>
      </property>
      <property name="text">
-      <string extracomment="PW">Cks090909@</string>
+      <string extracomment="PW"></string>
      </property>
      <property name="maxLength">
       <number>20</number>

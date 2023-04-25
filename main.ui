@@ -1,0 +1,442 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>253</width>
+    <height>376</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="QFrame" name="F1">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>10</y>
+      <width>231</width>
+      <height>91</height>
+     </rect>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::StyledPanel</enum>
+    </property>
+    <property name="frameShadow">
+     <enum>QFrame::Raised</enum>
+    </property>
+    <widget class="QLabel" name="label_txt">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>0</y>
+       <width>111</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>등록번호.txt</string>
+     </property>
+     <property name="textInteractionFlags">
+      <set>Qt::LinksAccessibleByMouse</set>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="btn_txt_add">
+     <property name="geometry">
+      <rect>
+       <x>130</x>
+       <y>0</y>
+       <width>101</width>
+       <height>32</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>추가</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="btn_id">
+     <property name="geometry">
+      <rect>
+       <x>130</x>
+       <y>60</y>
+       <width>101</width>
+       <height>32</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>적용</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="label_id">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>30</y>
+       <width>113</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="inputMask">
+      <string extracomment="ID"/>
+     </property>
+     <property name="text">
+      <string extracomment="ID">최공수</string>
+     </property>
+     <property name="maxLength">
+      <number>20</number>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="label_pw">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>60</y>
+       <width>113</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="inputMask">
+      <string extracomment="PW"/>
+     </property>
+     <property name="text">
+      <string extracomment="PW">Cks090909@</string>
+     </property>
+     <property name="maxLength">
+      <number>20</number>
+     </property>
+     <property name="echoMode">
+      <enum>QLineEdit::Password</enum>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QFrame" name="F2">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>110</y>
+      <width>231</width>
+      <height>181</height>
+     </rect>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::StyledPanel</enum>
+    </property>
+    <property name="frameShadow">
+     <enum>QFrame::Raised</enum>
+    </property>
+    <widget class="QTabWidget" name="TabWidget">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>0</y>
+       <width>231</width>
+       <height>191</height>
+      </rect>
+     </property>
+     <property name="currentIndex">
+      <number>2</number>
+     </property>
+     <widget class="QWidget" name="File_tab">
+      <attribute name="title">
+       <string>파일</string>
+      </attribute>
+      <widget class="QLabel" name="label_xlsx">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>20</y>
+         <width>81</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>엑셀파일.xlsx</string>
+       </property>
+       <property name="textInteractionFlags">
+        <set>Qt::LinksAccessibleByMouse</set>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="btn_xlsx_add">
+       <property name="geometry">
+        <rect>
+         <x>110</x>
+         <y>20</y>
+         <width>113</width>
+         <height>32</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>추가</string>
+       </property>
+      </widget>
+      <widget class="QCheckBox" name="CB_add_front_file">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>60</y>
+         <width>87</width>
+         <height>20</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string> 앞 추 가</string>
+       </property>
+      </widget>
+      <widget class="QCheckBox" name="CB_add_back_file">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>80</y>
+         <width>87</width>
+         <height>20</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string> 뒤 추 가</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="btn_start">
+       <property name="geometry">
+        <rect>
+         <x>110</x>
+         <y>110</y>
+         <width>113</width>
+         <height>32</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>시작</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="btn_pause_file">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>110</y>
+         <width>113</width>
+         <height>32</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>일시 정지</string>
+       </property>
+      </widget>
+     </widget>
+     <widget class="QWidget" name="Text_tab">
+      <attribute name="title">
+       <string>텍스트</string>
+      </attribute>
+      <widget class="QLineEdit" name="label_input">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>20</y>
+         <width>113</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="inputMask">
+        <string extracomment="PW"/>
+       </property>
+       <property name="text">
+        <string extracomment="input_text">   텍스트 입력</string>
+       </property>
+       <property name="maxLength">
+        <number>20</number>
+       </property>
+       <property name="echoMode">
+        <enum>QLineEdit::Normal</enum>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="btn_input">
+       <property name="geometry">
+        <rect>
+         <x>120</x>
+         <y>20</y>
+         <width>101</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>적용</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="btn_start_2">
+       <property name="geometry">
+        <rect>
+         <x>110</x>
+         <y>110</y>
+         <width>113</width>
+         <height>32</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>시작</string>
+       </property>
+      </widget>
+      <widget class="QCheckBox" name="CB_front_add_text">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>60</y>
+         <width>87</width>
+         <height>20</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string> 앞 추 가</string>
+       </property>
+      </widget>
+      <widget class="QCheckBox" name="CB_back_add_file">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>80</y>
+         <width>87</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string> 뒤 추 가</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="btn_pause_txt">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>110</y>
+         <width>113</width>
+         <height>32</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>일시 정지</string>
+       </property>
+      </widget>
+     </widget>
+     <widget class="QWidget" name="Auto">
+      <attribute name="title">
+       <string>자동</string>
+      </attribute>
+      <widget class="QCheckBox" name="CB_auto_int">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>60</y>
+         <width>87</width>
+         <height>20</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>  숫 자</string>
+       </property>
+      </widget>
+      <widget class="QCheckBox" name="CB_auto_txt">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>80</y>
+         <width>87</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>  문 자 </string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_Auto">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>10</y>
+         <width>211</width>
+         <height>41</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>격자괄호 ( [] ) 와 그 안의 텍스트 삭제</string>
+       </property>
+       <property name="textInteractionFlags">
+        <set>Qt::NoTextInteraction</set>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="btn_start_3">
+       <property name="geometry">
+        <rect>
+         <x>110</x>
+         <y>110</y>
+         <width>113</width>
+         <height>32</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>시작</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="btn_pause_auto">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>110</y>
+         <width>113</width>
+         <height>32</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>일시 정지</string>
+       </property>
+      </widget>
+     </widget>
+    </widget>
+   </widget>
+   <widget class="QPushButton" name="btn_Quit">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>340</y>
+      <width>113</width>
+      <height>32</height>
+     </rect>
+    </property>
+    <property name="autoFillBackground">
+     <bool>false</bool>
+    </property>
+    <property name="text">
+     <string>닫기</string>
+    </property>
+   </widget>
+   <widget class="QProgressBar" name="progressBar">
+    <property name="geometry">
+     <rect>
+      <x>7</x>
+      <y>300</y>
+      <width>231</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="value">
+     <number>0</number>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_ing">
+    <property name="geometry">
+     <rect>
+      <x>170</x>
+      <y>340</y>
+      <width>71</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>대기중</string>
+    </property>
+   </widget>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

@@ -1,5 +1,4 @@
 # Klas_Macro
-Only Access in KLAS DNS , so only use people who library workers and civil servants
 
  ** Chrome 이 깔려 있어야만 합니다.
 

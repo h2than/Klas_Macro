@@ -93,16 +93,17 @@ class WindowClass(QMainWindow, Ui_MainWindow):
     def pause(self):
         if self.t1.flag == True:
             self.t1.flag == False
-            self.label_int.setText("일시정지")
+            self.label_ing.setText("일시정지")
         else : 
             self.t1.flag == True
-            self.label_int.setText("진행중")
+            self.label_ing.setText("진행중")
         
     # 강제 종료
     def exit(self):
-        self.t1.stop()
-        self.wait(5000)
-        self.t1 = None
+        if self.t1 == None:
+            self.t1.terminate()
+            self.wait(5000)
+            self.t1 = None
         app.exec_( )
         
         
@@ -169,6 +170,8 @@ class WindowClass(QMainWindow, Ui_MainWindow):
     def start_btn(self):
         if self.opt == 0 and self.xlsx_file_path == ""  :
             errormsg(text="옵션을 다시 확인 해주세요")
+            if self.label_txt.text() == "등록번호":
+                errormsg(text="등록번호 파일을 추가해 주세요")
         else :
             if login_check(self.id,self.pw) :
                 try:
@@ -178,6 +181,7 @@ class WindowClass(QMainWindow, Ui_MainWindow):
                         self.t1.context.connect(self.state)
                         self.t1.finished.connect(self.onFinished)
                         self.t1.progress.connect(self.onProgress)
+                        self.t1.error.connect(self.handel_error)
                         self.t1.start()
                     else:
                         self.btn_start_2.setEnabled(False)
@@ -185,6 +189,7 @@ class WindowClass(QMainWindow, Ui_MainWindow):
                         self.t1.context.connect(self.state)
                         self.t1.finished.connect(self.onFinished)
                         self.t1.progress.connect(self.onProgress)
+                        self.t1.error.connect(self.handel_error)
                         self.t1.start()
                 except:
                     pass
@@ -217,6 +222,8 @@ class WindowClass(QMainWindow, Ui_MainWindow):
     def start_btn_2(self):
         if self.opt == 0 or self.input_text == "" :
             errormsg(text="옵션을 다시 확인 해주세요")
+            if self.label_txt.text() == "등록번호":
+                errormsg(text="등록번호 파일을 추가해 주세요")
         else :
             if login_check(self.id,self.pw) :
                 try:
@@ -226,6 +233,7 @@ class WindowClass(QMainWindow, Ui_MainWindow):
                         self.t1.context.connect(self.state)
                         self.t1.finished.connect(self.onFinished)
                         self.t1.progress.connect(self.onProgress)
+                        self.t1.error.connect(self.handel_error)
                         self.t1.start()
                     else:
                         self.btn_start_2.setEnabled(False)
@@ -233,6 +241,7 @@ class WindowClass(QMainWindow, Ui_MainWindow):
                         self.t1.context.connect(self.state)
                         self.t1.finished.connect(self.onFinished)
                         self.t1.progress.connect(self.onProgress)
+                        self.t1.error.connect(self.handel_error)
                         self.t1.start()
                 except:
                     pass
@@ -249,6 +258,8 @@ class WindowClass(QMainWindow, Ui_MainWindow):
     def start_btn_3(self):
         if not self.CB_auto_int.isChecked() and not self.CB_auto_txt.isChecked() :
             errormsg(text="체크 박스를 선택해 주세요!")
+            if self.label_txt.text() == "등록번호":
+                errormsg(text="등록번호 파일을 추가해 주세요")
         else:
             if login_check(self.id,self.pw) :
                 try:
@@ -258,6 +269,7 @@ class WindowClass(QMainWindow, Ui_MainWindow):
                         self.t1.context.connect(self.state)
                         self.t1.finished.connect(self.onFinished)
                         self.t1.progress.connect(self.onProgress)
+                        self.t1.error.connect(self.handel_error)
                         self.t1.start()
                     elif self.opt == 2:
                         self.btn_start_3.setEnabled(False)
@@ -265,6 +277,7 @@ class WindowClass(QMainWindow, Ui_MainWindow):
                         self.t1.context.connect(self.state)
                         self.t1.finished.connect(self.onFinished)
                         self.t1.progress.connect(self.onProgress)
+                        self.t1.error.connect(self.handel_error)
                         self.t1.start()
                     else:
                         self.btn_start_3.setEnabled(False)
@@ -272,11 +285,16 @@ class WindowClass(QMainWindow, Ui_MainWindow):
                         self.t1.context.connect(self.state)
                         self.t1.finished.connect(self.onFinished)
                         self.t1.progress.connect(self.onProgress)
+                        self.t1.error.connect(self.handel_error)
                         self.t1.start()
                 except:
                     pass
                 
     # 스레드 slot
+    def handel_error(self, err_str):
+        errormsg(text=err_str)
+        self.exit()
+    
     def state(self, context):
         self.label_ing.setText(context)
             

@@ -480,8 +480,14 @@
        <height>31</height>
       </rect>
      </property>
+     <property name="font">
+      <font>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
      <property name="text">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#7a81ff;&quot;&gt;등록번호.txt&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      <string>등록번호</string>
      </property>
      <property name="textInteractionFlags">
       <set>Qt::LinksAccessibleByMouse</set>
@@ -559,8 +565,8 @@
       <rect>
        <x>10</x>
        <y>65</y>
-       <width>111</width>
-       <height>21</height>
+       <width>181</width>
+       <height>31</height>
       </rect>
      </property>
      <property name="font">
@@ -605,8 +611,8 @@
       <rect>
        <x>10</x>
        <y>0</y>
-       <width>161</width>
-       <height>31</height>
+       <width>201</width>
+       <height>41</height>
       </rect>
      </property>
      <property name="font">

@@ -59,7 +59,7 @@ def loop5(book_title_box):
     pattern = re.compile(r'\[(\d+)\]')
     matches = pattern.findall(title)
     title = pattern.sub('',title)
-    title.strip()
+    title = title.strip()
 
     if matches:
         book_title_box.clear()
@@ -75,7 +75,7 @@ def loop6(book_title_box):
     if matches:
         book_title_box.clear()
         title = re.sub(r"\[[^\d]+\]", "", title)
-        title.strip()
+        title = title.strip()
         book_title_box.send_keys(title)
         book_title_box.send_keys(Keys.ENTER)
         
@@ -83,7 +83,7 @@ def loop7(book_title_box):
     title = str(book_title_box.get_attribute('value'))
     pattern = r'\[[^\]]*\]'
     title = re.sub(pattern, '', title)
-    title.strip()
+    title = title.strip()
     book_title_box.clear()
     book_title_box.send_keys(title)
     book_title_box.send_keys(Keys.ENTER)
@@ -121,29 +121,22 @@ def common(ins):
         syn_alert = ins.driver.switch_to.alert.get_attribute("style")
         if syn_alert == 'block' :
             ins.next_btn.send_keys(Keys.ENTER)
+            if ins.val == ins.num :
+                ins.flag == False
+            else:
+                ins.val -= 1
     except:
         # 오류난 파일, 바탕화면의 "서지정보 오류 목록.txt" 파일에 따로 저장할것
-        if ins.val == ins.num :
-            ins.flag == False
-        else:
-            ins.val -= 1
-            
-        # 신텍스 오류 처리 다른 방법
-    # try:
-    #     div = ins.syn_tex_box.find_element(By.TAG_NAME, 'div').text
-    #     if len(div) > 0:
-    #         ins.next_btn.send_keys(Keys.ENTER)
-    # except:
-    #     if ins.val == ins.num :
-    #         ins.flag == False
-    #     else:
-    #         ins.val -= 1
-    
-        # 운영자 문의 오류 ( 거의 발생 X )
+        pass        
+
     try :
         admin_error = ins.driver.find_element(By.XPATH, '/html/body/div[6]')
         if admin_error.get_attribute("style") == 'block':
-            ins.driver.quit()
+            ins.next_btn.send_keys(Keys.ENTER)
+            if ins.val == ins.num :
+                ins.flag == False
+            else:
+                ins.val -= 1
     except :
         pass
     

@@ -8,6 +8,7 @@ class Thread(QThread):
     finished = pyqtSignal()
     progress = pyqtSignal(int)
     context = pyqtSignal(str)
+    error = pyqtSignal(str)
     
     flag = True
     
@@ -96,8 +97,17 @@ class Thread(QThread):
     def run(self):
         self.context.emit("진행중")
         self.driver = webdriver.Chrome(options=self.options)
-        klas_upload(self)
-        self.loop()
+        try:
+            klas_upload(self)
+        except Exception as e:
+            self.error.emit(str(e))
+            self.stop()
+        try:
+            self.loop()
+        except Exception as e:
+            self.error.emit(str(e))
+            self.stop()
+            
         self.context.emit("종료")
         self.finished.emit()
         self.stop()

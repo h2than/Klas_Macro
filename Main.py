@@ -91,15 +91,20 @@ class WindowClass(QMainWindow, Ui_MainWindow):
         
     # 일시정지
     def pause(self):
-        pass        
-    
+        if self.t1.flag == True:
+            self.t1.flag == False
+            self.label_int.setText("일시정지")
+        else : 
+            self.t1.flag == True
+            self.label_int.setText("진행중")
+        
     # 강제 종료
     def exit(self):
-        try:
-            self.t1.terminate()
-        except:
-            pass
+        self.t1.stop()
+        self.wait(5000)
+        self.t1 = None
         app.exec_( )
+        
         
     # 상단 Frame
     def txt_add(self):
@@ -279,11 +284,9 @@ class WindowClass(QMainWindow, Ui_MainWindow):
         self.progressBar.setValue(value)
             
     def onFinished(self):
-        self.t1 = None
-        self.btn_start_1.setEnabled(True)
-        self.btn_start_2.setEnabled(True)
-        self.btn_start_3.setEnabled(True)
+        self.label_ing.setText("완료")
         infomsg(text="작업 완료")
+        self.exit()
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)

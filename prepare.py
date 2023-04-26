@@ -90,11 +90,14 @@ def loop7(book_title_box):
 
 
 def common(ins):
+    
     try :
+        # 저장 버튼
         ins.driver.execute_script("arguments[0].click()", ins.save_btn)
     except :
-        ins.val -= 1
+        pass
 
+        # 저장 확인 알림
     try:
         WebDriverWait(ins.driver, 3).until(EC.alert_is_present())
         alert = ins.driver.switch_to.alert
@@ -102,6 +105,7 @@ def common(ins):
     except:
         pass
 
+        # 중복된 등록번호 알림
     try:
         wait = WebDriverWait(ins.driver, 3)
         dup_msg = wait.until(EC.presence_of_element_located((By.XPATH, '/html/body/div[7]')))
@@ -109,29 +113,40 @@ def common(ins):
             dup_btn = ins.driver.find_element(By.XPATH, '//*[@id="confirm_ok"]')
             ins.driver.execute_script("arguments[0].click()", dup_btn)
     except:
-        ins.val -= 1
-    
+        pass
+        
+        # 신텍스 오류
     try:
         WebDriverWait(ins.driver, 3).until(EC.alert_is_present())
         syn_alert = ins.driver.switch_to.alert.get_attribute("style")
         if syn_alert == 'block' :
             ins.next_btn.send_keys(Keys.ENTER)
     except:
-        pass
-
-    try:
-        div = ins.syn_tex_box.find_element(By.TAG_NAME, 'div').text
-        if len(div) > 0:
-            ins.next_btn.send_keys(Keys.ENTER)
-    except:
-        pass
+        # 오류난 파일, 바탕화면의 "서지정보 오류 목록.txt" 파일에 따로 저장할것
+        if ins.val == ins.num :
+            ins.flag == False
+        else:
+            ins.val -= 1
+            
+        # 신텍스 오류 처리 다른 방법
+    # try:
+    #     div = ins.syn_tex_box.find_element(By.TAG_NAME, 'div').text
+    #     if len(div) > 0:
+    #         ins.next_btn.send_keys(Keys.ENTER)
+    # except:
+    #     if ins.val == ins.num :
+    #         ins.flag == False
+    #     else:
+    #         ins.val -= 1
     
+        # 운영자 문의 오류 ( 거의 발생 X )
     try :
         admin_error = ins.driver.find_element(By.XPATH, '/html/body/div[6]')
         if admin_error.get_attribute("style") == 'block':
             ins.driver.quit()
     except :
         pass
+    
     
 def klas_upload(ins):
     ins.driver.get("https://klas.jeonju.go.kr/klas3/Admin/")
@@ -179,7 +194,6 @@ def klas_upload(ins):
         ins.save_btn = ins.driver.find_element(By.XPATH, '//*[@id="marcForm"]/div[2]/div[1]/input[18]')
         ins.next_btn = ins.driver.find_element(By.XPATH, '//*[@id="nextBtn"]')
         ins.syn_tex_box = ins.driver.find_element(By.XPATH, '//*[@id="syntexMsg_div"]')
-        ins.final = ins.driver.find_element(By.XPATH, '/html/body/div[7]')
     
     except:
         pass

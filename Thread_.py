@@ -9,11 +9,13 @@ class Thread(QThread):
     progress = pyqtSignal(int)
     context = pyqtSignal(str)
     
-    driver = None
-    options = None
+    flag = True
     
-    num = 0
-    val = 0
+    driver = None # Selenium driver
+    options = None # Selenium options
+    
+    num = 0 # 총 자료 개수
+    val = 0 # 현재 자료 위치
     
     id = ""
     pw = ""
@@ -25,18 +27,15 @@ class Thread(QThread):
     save_btn = None
     next_btn = None
     syn_tex_box = None
-    final = None
 
-    
     select = 0
     
     def __init__(self , id, pw, txt_path , xlsx_path, input_text, select):
         super().__init__()
-        self.flag = True
         try:
             chromedriver_autoinstaller.install()
         except:
-            pass
+            raise Exception("Chrome Driver Not Installed")
         
         # selenium option
         self.options = webdriver.ChromeOptions()
@@ -101,7 +100,8 @@ class Thread(QThread):
         self.loop()
         self.context.emit("종료")
         self.finished.emit()
-        self.driver.quit()
+        self.stop()
+        
     def stop(self):
-        self.driver.quit()
-        self.flag = False
+        self.quit()
+        self.wait(5000)

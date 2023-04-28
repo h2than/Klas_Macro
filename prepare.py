@@ -1,4 +1,5 @@
 import re
+import os
 
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
@@ -95,7 +96,7 @@ def common(ins):
         # 저장 버튼
         ins.driver.execute_script("arguments[0].click()", ins.save_btn)
     except :
-        pass
+        ins.error.emit("저장 버튼 에러")
 
         # 저장 확인 알림
     try:
@@ -103,7 +104,7 @@ def common(ins):
         alert = ins.driver.switch_to.alert
         alert.accept()
     except:
-        pass
+        ins.error.emit("알림 확인 버튼 에러")
 
         # 중복된 등록번호 알림
     try:
@@ -125,9 +126,13 @@ def common(ins):
                 ins.flag == False
             else:
                 ins.val -= 1
+            # 오류난 파일, 바탕화면의 "서지정보 오류 목록.txt" 파일에 따로 저장할것
+                # desktop = os.path.join(os.path.expanduser('~'), 'Desktop')
+                # file_path = os.path.join(desktop, '신텍스 오류 목록.txt')
+                # with open(file_path, mode='w', encoding='utf-8') as f:
+                #     f.write('\n')
     except:
-        # 오류난 파일, 바탕화면의 "서지정보 오류 목록.txt" 파일에 따로 저장할것
-        pass        
+        ins.error.emit("신텍스 오류 에러")
 
     try :
         admin_error = ins.driver.find_element(By.XPATH, '/html/body/div[6]')
@@ -138,7 +143,7 @@ def common(ins):
             else:
                 ins.val -= 1
     except :
-        pass
+        ins.error.emit("관리자 문의 에러")
     
     
 def klas_upload(ins):

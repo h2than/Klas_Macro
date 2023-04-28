@@ -35,8 +35,9 @@ class Thread(QThread):
         super().__init__()
         try:
             chromedriver_autoinstaller.install()
-        except:
-            raise Exception("Chrome Driver Not Installed")
+        except Exception:
+            self.error.emit("Chrome Driver Error")
+            self.terminate()
         
         # selenium option
         self.options = webdriver.ChromeOptions()
@@ -92,7 +93,7 @@ class Thread(QThread):
         self.driver = webdriver.Chrome(options=self.options)
         try:
             klas_upload(self)
-        except Exception as e:
+        except Exception :
             self.error.emit("Login Error")
             self.terminate()
         while True:

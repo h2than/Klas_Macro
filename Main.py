@@ -91,21 +91,21 @@ class WindowClass(QMainWindow, Ui_MainWindow):
         
     # 일시정지
     def pause(self):
-        if self.t1.flag == True:
-            self.t1.flag == False
-            self.label_ing.setText("일시정지")
-        else : 
-            self.t1.flag == True
-            self.label_ing.setText("진행중")
+        if self.t1 != None:
+            if self.t1.flag == True :
+                self.t1.flag = False
+                self.label_ing.setText("일시정지")
+            else:
+                self.t1.flag = True
+                self.label_ing.setText("진행중")
         
     # 강제 종료
     def exit(self):
-        if self.t1 == None:
+        if self.t1 != None:
             self.t1.terminate()
-            self.wait(5000)
+            time.sleep(3)
             self.t1 = None
-        app.exec_( )
-        
+        app.quit()
         
     # 상단 Frame
     def txt_add(self):
@@ -179,7 +179,6 @@ class WindowClass(QMainWindow, Ui_MainWindow):
                         self.btn_start_2.setEnabled(False)
                         self.t1 = Thread(id=self.id, pw=self.pw, txt_path=self.txt_file_path,xlsx_path=self.xlsx_file_path,input_text="", select=1)
                         self.t1.context.connect(self.state)
-                        self.t1.finished.connect(self.onFinished)
                         self.t1.progress.connect(self.onProgress)
                         self.t1.error.connect(self.handel_error)
                         self.t1.start()
@@ -187,7 +186,6 @@ class WindowClass(QMainWindow, Ui_MainWindow):
                         self.btn_start_2.setEnabled(False)
                         self.t1 = Thread(id=self.id, pw=self.pw, txt_path=self.txt_file_path,xlsx_path=self.xlsx_file_path,input_text="", select=2)
                         self.t1.context.connect(self.state)
-                        self.t1.finished.connect(self.onFinished)
                         self.t1.progress.connect(self.onProgress)
                         self.t1.error.connect(self.handel_error)
                         self.t1.start()
@@ -231,7 +229,6 @@ class WindowClass(QMainWindow, Ui_MainWindow):
                         self.btn_start_2.setEnabled(False)
                         self.t1 = Thread(id=self.id, pw=self.pw, txt_path=self.txt_file_path,xlsx_path="",input_text=self.input_text, select=3)
                         self.t1.context.connect(self.state)
-                        self.t1.finished.connect(self.onFinished)
                         self.t1.progress.connect(self.onProgress)
                         self.t1.error.connect(self.handel_error)
                         self.t1.start()
@@ -239,7 +236,6 @@ class WindowClass(QMainWindow, Ui_MainWindow):
                         self.btn_start_2.setEnabled(False)
                         self.t1 = Thread(id=self.id, pw=self.pw, txt_path=self.txt_file_path,xlsx_path="",input_text=self.input_text, select=4)
                         self.t1.context.connect(self.state)
-                        self.t1.finished.connect(self.onFinished)
                         self.t1.progress.connect(self.onProgress)
                         self.t1.error.connect(self.handel_error)
                         self.t1.start()
@@ -267,7 +263,6 @@ class WindowClass(QMainWindow, Ui_MainWindow):
                         self.btn_start_3.setEnabled(False)
                         self.t1 = Thread(id=self.id, pw=self.pw, txt_path=self.txt_file_path,xlsx_path="",input_text="", select=5)
                         self.t1.context.connect(self.state)
-                        self.t1.finished.connect(self.onFinished)
                         self.t1.progress.connect(self.onProgress)
                         self.t1.error.connect(self.handel_error)
                         self.t1.start()
@@ -275,7 +270,6 @@ class WindowClass(QMainWindow, Ui_MainWindow):
                         self.btn_start_3.setEnabled(False)
                         self.t1 = Thread(id=self.id, pw=self.pw, txt_path=self.txt_file_path,xlsx_path="",input_text="", select=6)
                         self.t1.context.connect(self.state)
-                        self.t1.finished.connect(self.onFinished)
                         self.t1.progress.connect(self.onProgress)
                         self.t1.error.connect(self.handel_error)
                         self.t1.start()
@@ -283,7 +277,6 @@ class WindowClass(QMainWindow, Ui_MainWindow):
                         self.btn_start_3.setEnabled(False)
                         self.t1 = Thread(id=self.id, pw=self.pw, txt_path=self.txt_file_path,xlsx_path="",input_text="", select=7)
                         self.t1.context.connect(self.state)
-                        self.t1.finished.connect(self.onFinished)
                         self.t1.progress.connect(self.onProgress)
                         self.t1.error.connect(self.handel_error)
                         self.t1.start()
@@ -301,10 +294,6 @@ class WindowClass(QMainWindow, Ui_MainWindow):
     def onProgress(self, value):
         self.progressBar.setValue(value)
             
-    def onFinished(self):
-        self.label_ing.setText("완료")
-        infomsg(text="작업 완료")
-        self.exit()
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)

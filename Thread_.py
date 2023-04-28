@@ -2,10 +2,10 @@ from PyQt5.QtCore import QThread,pyqtSignal
 import chromedriver_autoinstaller
 from selenium import webdriver
 from prepare import klas_upload,common,loop1,loop2,loop3,loop4,loop5,loop6,loop7
+import time
 
 class Thread(QThread):
     # signal
-    finished = pyqtSignal()
     progress = pyqtSignal(int)
     context = pyqtSignal(str)
     error = pyqtSignal(str)
@@ -52,47 +52,40 @@ class Thread(QThread):
         
     def loop(self):
         if self.select == 1:
-            while self.flag and self.val <= self.num:
-                loop1(self.book_title_box,self.xlsx_file_path,self.val)
-                self.val += 1
-                self.progress.emit(int(self.val*100/self.num))
-                common(self)
+            loop1(self.book_title_box,self.xlsx_file_path,self.val)
+            self.val += 1
+            self.progress.emit(int(self.val*100/self.num))
+            common(self)
         elif self.select == 2:
-            while self.flag and self.val <= self.num:
-                loop2(self.book_title_box,self.xlsx_file_path,self.val)
-                self.val += 1
-                self.progress.emit(int(self.val*100/self.num))
-                common(self)
+            loop2(self.book_title_box,self.xlsx_file_path,self.val)
+            self.val += 1
+            self.progress.emit(int(self.val*100/self.num))
+            common(self)
         elif self.select == 3:
-            while self.flag and self.val <= self.num:
-                loop3(self.book_title_box,self.input_text)
-                self.val += 1
-                self.progress.emit(int(self.val*100/self.num))
-                common(self)
+            loop3(self.book_title_box,self.input_text)
+            self.val += 1
+            self.progress.emit(int(self.val*100/self.num))
+            common(self)
         elif self.select == 4:
-            while self.flag and self.val <= self.num:
-                loop4(self.book_title_box,self.input_text)
-                self.val += 1
-                self.progress.emit(int(self.val*100/self.num))
-                common(self)
+            loop4(self.book_title_box,self.input_text)
+            self.val += 1
+            self.progress.emit(int(self.val*100/self.num))
+            common(self)
         elif self.select == 5:
-            while self.flag and self.val <= self.num:
-                loop5(self.book_title_box)
-                self.val += 1
-                self.progress.emit(int(self.val*100/self.num))
-                common(self)
+            loop5(self.book_title_box)
+            self.val += 1
+            self.progress.emit(int(self.val*100/self.num))
+            common(self)
         elif self.select == 6:
-            while self.flag and self.val <= self.num:
-                loop6(self.book_title_box)
-                self.val += 1
-                self.progress.emit(int(self.val*100/self.num))
-                common(self)
+            loop6(self.book_title_box)
+            self.val += 1
+            self.progress.emit(int(self.val*100/self.num))
+            common(self)
         elif self.select == 7:
-            while self.flag and self.val <= self.num:
-                loop7(self.book_title_box)
-                self.val += 1
-                self.progress.emit(int(self.val*100/self.num))
-                common(self)
+            loop7(self.book_title_box)
+            self.val += 1
+            self.progress.emit(int(self.val*100/self.num))
+            common(self)
         
     def run(self):
         self.context.emit("진행중")
@@ -100,18 +93,13 @@ class Thread(QThread):
         try:
             klas_upload(self)
         except Exception as e:
-            self.error.emit(str(e))
-            self.stop()
-        try:
-            self.loop()
-        except Exception as e:
-            self.error.emit(str(e))
-            self.stop()
-            
-        self.context.emit("종료")
-        self.finished.emit()
-        self.stop()
-        
-    def stop(self):
-        self.quit()
-        self.wait(5000)
+            self.error.emit("Login Error")
+            self.terminate()
+        while True:
+            if self.flag == False:
+                time.sleep(3)
+            elif self.flag and self.val <= self.num:
+                self.loop()
+            else:
+                self.context.emit("작업 완료")
+                self.quit()

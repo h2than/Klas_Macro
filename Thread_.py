@@ -28,6 +28,8 @@ class Thread(QThread):
     save_btn = None
     next_btn = None
     syn_tex_box = None
+    warning = None
+    failure = None
 
     select = 0
     
@@ -100,6 +102,7 @@ class Thread(QThread):
             if self.flag == False:
                 time.sleep(3)
             elif self.flag and self.val <= self.num:
+                self.driver.implicitly_wait(3)
                 self.loop()
             else:
                 self.context.emit("작업 완료")

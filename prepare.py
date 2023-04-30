@@ -1,10 +1,14 @@
 import re
 import os
 
-from selenium.webdriver.common.by import By
+from selenium import webdriver
+from selenium.webdriver import ActionChains
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import Select
 from selenium.webdriver.support.ui import WebDriverWait
+
 
 import openpyxl
 
@@ -21,7 +25,7 @@ def openxlsx(xlsx_file_path):
         column_a.append(cell.value)
         
     return column_a
-    
+
 
 def loop1(book_title_box,xlsx_file_path , val):
 
@@ -92,13 +96,11 @@ def loop7(book_title_box):
 
 def common(ins):
     
-    Reg_num_error = ins.driver.find_element(By.XPATH, '//*[@id="marcEditor"]/div[21]/font[3]/pre').text
-    
     try :
         # 저장 버튼
         ins.driver.execute_script("arguments[0].click()", ins.save_btn)
     except :
-        ins.error.emit("저장 버튼 에러")
+        pass
 
         # 저장 확인 알림
     try:
@@ -106,7 +108,7 @@ def common(ins):
         alert = ins.driver.switch_to.alert
         alert.accept()
     except:
-        ins.error.emit("알림 확인 버튼 에러")
+        pass
 
         # 중복된 등록번호 알림
     try:
@@ -118,34 +120,68 @@ def common(ins):
     except:
         pass
         
-        # 신텍스 오류
+        # 신텍스 Alert
     try:
         WebDriverWait(ins.driver, 3).until(EC.alert_is_present())
-        syn_alert = ins.driver.switch_to.alert.get_attribute("style")
-        if syn_alert == 'block' :
+        alert = ins.driver.switch_to.alert
+        alert.accept()
+    except:
+        pass
+        # Systex Error
+    try:
+        is_error = ins.syn_tex_box.find_element(By.TAG_NAME, 'div').text
+        if len(is_error) > 0:
+                    
+            divs = ins.driver.find_elements(By.XPATH, '//*[@id="marcEditor"]/div')
+            div = divs[-2]
+            fonts = div.find_elements(By.XPATH, './font')
+            Reg_error = fonts[2].find_element(By.XPATH, './pre').text
+
+            desktop = os.path.join(os.path.expanduser('~'), 'Desktop')
+            file_path = os.path.join(desktop, '신텍스 오류 목록.txt')
             ins.next_btn.send_keys(Keys.ENTER)
+            with open(file_path, mode='w', encoding='utf-8') as f:
+                f.write(f'{Reg_error}\n')
+
             if ins.val == ins.num :
                 ins.flag == False
             else:
                 ins.val -= 1
-            # 오류난 파일, 바탕화면의 "서지정보 오류 목록.txt" 파일에 따로 저장할것
-            desktop = os.path.join(os.path.expanduser('~'), 'Desktop')
-            file_path = os.path.join(desktop, '신텍스 오류 목록.txt')
-            with open(file_path, mode='w', encoding='utf-8') as f:
-                f.write(Reg_num_error + '\n')
     except:
-        ins.error.emit("신텍스 오류 에러")
+        pass
+
+        # 면장수 , DDC 
+    try:
+        if ins.warning.get_attribute("style") == 'block':
+            ins.driver.execute_script("arguments[0].click()", ins.next_btn)
+            if ins.val == ins.num :
+                ins.flag == False
+            else:
+                ins.val -= 1
+    except:
+        pass
 
     try :
-        admin_error = ins.driver.find_element(By.XPATH, '/html/body/div[6]')
-        if admin_error.get_attribute("style") == 'block':
-            ins.next_btn.send_keys(Keys.ENTER)
+        if ins.failure.get_attribute("style") == 'block':
+            ins.driver.execute_script("arguments[0].click()", ins.next_btn)
             if ins.val == ins.num :
                 ins.flag == False
             else:
                 ins.val -= 1
     except :
-        ins.error.emit("관리자 문의 에러")
+        pass
+        
+
+'''
+    try:
+        wait = WebDriverWait(ins.driver, 3)
+        fail_msg = wait.until(EC.presence_of_element_located((By.XPATH, '/html/body/div[6]')))
+        if fail_msg.is_displayed() == True:
+            fail_btn = ins.driver.find_element(By.XPATH, '//*[@id="confirm_ok"]')
+            ins.driver.execute_script("arguments[0].click()", fail_btn)
+    except:
+        pass
+'''
     
     
 def klas_upload(ins):
@@ -188,12 +224,11 @@ def klas_upload(ins):
     except :
         ins.driver.quit()
 
-    try :
-        wait = WebDriverWait(ins.driver, 10)
-        ins.book_title_box = wait.until(EC.presence_of_element_located((By.XPATH, '//*[@id="book_title"]')))    
-        ins.save_btn = ins.driver.find_element(By.XPATH, '//*[@id="marcForm"]/div[2]/div[1]/input[18]')
-        ins.next_btn = ins.driver.find_element(By.XPATH, '//*[@id="nextBtn"]')
-        ins.syn_tex_box = ins.driver.find_element(By.XPATH, '//*[@id="syntexMsg_div"]')
-    
-    except:
-        pass
+
+    wait = WebDriverWait(ins.driver, 10)
+    ins.book_title_box = wait.until(EC.presence_of_element_located((By.XPATH, '//*[@id="book_title"]')))    
+    ins.save_btn = ins.driver.find_element(By.XPATH, '//*[@id="marcForm"]/div[2]/div[1]/input[18]')
+    ins.next_btn = ins.driver.find_element(By.XPATH, '//*[@id="nextBtn"]')
+    ins.syn_tex_box = ins.driver.find_element(By.XPATH, '//*[@id="syntexMsg_div"]')
+    ins.warning = ins.driver.find_element(By.XPATH, '/html/body/div[7]')
+    ins.failure = ins.driver.find_element(By.XPATH, '/html/body/div[6]')

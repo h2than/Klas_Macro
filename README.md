@@ -15,7 +15,7 @@ ex.) test.txt LA000000 LA000001 ....> LA000005
 
 KLAS 에 접속할 id 와 pw 를 입력하고 적용 버튼을 눌러 주십시오.
 
-<img width="80%" src="https://user-images.githubusercontent.com/61488231/235585357-be93d2ba-d996-46e9-a933-7fc402e10d11.png"/>
+<img width="40%" src="https://user-images.githubusercontent.com/61488231/235585357-be93d2ba-d996-46e9-a933-7fc402e10d11.png"/>
 
 ** 보존번호를 부여하실떄 유용합니다. **
 

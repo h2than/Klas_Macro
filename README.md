@@ -1,19 +1,22 @@
 # Klas_Macro
 Only Access in KLAS DNS , so only use people who library workers and civil servants
 
-** Chrome 이 깔려 있어야만 합니다.
+
+<mark style='background-color: #ffdce0'> ** Chrome 이 깔려 있어야만 합니다.** </mark>
 
 모든 준비를 완료하고 시작버튼을 누르면 자동화된 소프트웨어로 컨트롤 되는 Chrome 창이 뜨며 KLAS 홈페이지 에서 배가자료 관리 -> 파일 선택 -> Mark 수정 페이지로 이동하여, 서가정보 중 책 제목을 수정&저장 하는 프로그램입니다.
 
-Klas 사이트에서 배가자료관리의 자료 목록 보기 에서 1000개를 선택하시는 것이 좋습니다.
+<mark style='background-color: #ffdce0'> 미리 Klas 사이트에서 배가자료관리의 자료 목록 보기 에서 1000개를 선택해 두세요 </mark>
+
 <img width="80%" src="https://user-images.githubusercontent.com/61488231/235584736-f0e60840-8821-46e6-ae66-993db91de86f.png"/>
 
 오직 KLAS 망에 있는 컴퓨터만 접속 할수 있습니다.
 
-프로그램 제일 상단에 등록번호가 한줄씩 담긴 txt 파일을 추가하여 주십시오.
+<mark style='background-color: #ffdce0'> 프로그램 제일 상단에 등록번호가 한줄씩 담긴 txt 파일을 추가하여 주십시오. </mark>
+
 ex.) test.txt LA000000 LA000001 ....> LA000005
 
-KLAS 에 접속할 id 와 pw 를 입력하고 적용 버튼을 눌러 주십시오.
+<mark style='background-color: #ffdce0'> KLAS 에 접속할 id 와 pw 를 입력하고 적용 버튼을 눌러 주십시오. </mark>
 
 <img width="40%" src="https://user-images.githubusercontent.com/61488231/235585357-be93d2ba-d996-46e9-a933-7fc402e10d11.png"/>
 

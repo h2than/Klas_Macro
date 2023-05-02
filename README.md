@@ -15,15 +15,13 @@ ex.) test.txt LA000000 LA000001 ....> LA000005
 
 KLAS 에 접속할 id 와 pw 를 입력하고 적용 버튼을 눌러 주십시오.
 
-<img width="80%" src="[https://user-images.githubusercontent.com/61488231/235585079-156226d5-2a45-4c7c-a122-d2b942a57245.png
-](https://user-images.githubusercontent.com/61488231/235585357-be93d2ba-d996-46e9-a933-7fc402e10d11.png)"/>
+<img width="80%" src="https://user-images.githubusercontent.com/61488231/235585357-be93d2ba-d996-46e9-a933-7fc402e10d11.png"/>
 
 ** 보존번호를 부여하실떄 유용합니다. **
 
 3-1. 첫번째 탭 에서는 엑셀파일을(.xlsx) 추가하여 주셔야 합니다. 해당 엑셀 파일에는 A열에서만 입력하실 텍스트를 인식합니다. 예를들어 책 제목 앞(혹은 뒤) 에 [보존번호] 를 붙히고 싶으시다면 [0001] 부터 [0100] 까지의 텍스트를 A1 부터 A100 까지의 엑셀의 셀에 저장하시고 [A 열만 해당됩니다.] 파일 탭에서 해당 엑셀파일을 추가 해 주십시오. 이후 제목의 앞에 올지 뒤에 올지를 체크박스를 통해 선택하시고 시작버튼을 누르시면 작동합니다.
 
-<img width="80%" src="[https://user-images.githubusercontent.com/61488231/235584881-36f45ef8-6351-4c2f-b38e-4a6a33b56c08.png](https://user-images.githubusercontent.com/61488231/235585303-a86cf263-0d23-4de9-a2cd-83c28ab9f284.png)
-"/>
+<img width="80%" src="https://user-images.githubusercontent.com/61488231/235584881-36f45ef8-6351-4c2f-b38e-4a6a33b56c08.png"/>
 
 ** 출판사를 부여하실떄 유용합니다. **
 

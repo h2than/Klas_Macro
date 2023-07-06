@@ -140,7 +140,7 @@ def common(ins):
             desktop = os.path.join(os.path.expanduser('~'), 'Desktop')
             file_path = os.path.join(desktop, '신텍스 오류 목록.txt')
             ins.next_btn.send_keys(Keys.ENTER)
-            with open(file_path, mode='w', encoding='utf-8') as f:
+            with open(file_path, mode='a', encoding='utf-8') as f:
                 f.write(f'{Reg_error}\n')
 
             if ins.val == ins.num :

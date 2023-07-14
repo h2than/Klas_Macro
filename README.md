@@ -1,12 +1,11 @@
 # Klas_Macro
-Only Access in KLAS DNS , so only use people who library workers and civil servants
-
 
 사진을 누르면 유튜브 설명 영상으로 넘어갑니다.
 
 [![Video Label](http://img.youtube.com/vi/LrTcQjTLAC4/0.jpg)](https://youtu.be/LrTcQjTLAC4)
 
 
+dist 폴더의 main.exe 를 실행시키세요.
 
 
 <mark style='background-color: #ffdce0'> ** Chrome 이 깔려 있어야만 합니다.** </mark>
@@ -73,6 +72,7 @@ ex.) test.txt LA000000 LA000001 ....> LA000005
 주의사항 ::
 
 KORMARC 245 필드 ▼a (서명) 부분만 수정 합니다. 서지 정보 오류시, 해당 페이지는 저장하지 않고 넘어갑니다.
+서지 정보 오류가 일어난 등록번호들은 바탕화면의 텍스트 파일을 생성하여 그곳에 저장됩니다
 
 이는 웹 페이지 안에서 동작하므로, 크롬창을 닫지 말아주십시오. ( 단, 다른 크롬창에서의 작업이나, 다른 프로그램 작업은 자유롭습니다 ) 닫기 버튼과 일시정지 버튼 작동이 미흡 할 수 있습니다. 예기치 못한 오류로 프로그램이 종료될 수 있습니다. ( 그러나 서지정보에 대한 잘못된 입력은 없습니다. ) Beta 버전으로 미완성된 프로그램 입니다. 추후 업데이트 예정입니다.
 

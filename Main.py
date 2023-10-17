@@ -4,6 +4,7 @@ import os
 from PyQt5.QtWidgets import QMainWindow,QApplication,QFileDialog,QMessageBox,QDialog
 from PyQt5.QtCore import Qt,QDir
 from PyQt5 import uic
+from gui import Ui_MainWindow
 
 from Thread_ import *
 
@@ -19,14 +20,6 @@ def infomsg(text):
     info_box.setText(text)
     info_box.setWindowTitle("알림")
     info_box.exec_()
-
-def resource_path(relative_path):
-    base_path = os.path.join(os.path.dirname(__file__), 'resources')
-    return os.path.join(base_path, relative_path)
-
-Ui_MainWindow, _ = uic.loadUiType(resource_path('main.ui'))
-
-
 
 # PyQt5 메인 윈도우
 class WindowClass(QMainWindow, Ui_MainWindow):

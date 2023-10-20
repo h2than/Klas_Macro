@@ -1,7 +1,7 @@
 from PyQt5.QtCore import QThread,pyqtSignal
 import chromedriver_autoinstaller
 from selenium import webdriver
-from prepare import klas_upload,common,loop1,loop2,loop3,loop4,loop5,loop6,loop7
+from prepare import *
 import time
 
 class Thread(QThread):
@@ -13,20 +13,15 @@ class Thread(QThread):
     # stop
     flag = True
     
-    driver = None # Selenium driver
-    options = None # Selenium options
-    
     # data val
     num = 0 # 총 자료 개수
     val = 0 # 현재 자료 위치
     end_count = 0 # common() 루프방지
     
-    # user val
-    id = ""
-    pw = ""
-    txt_file_path = ""
-    xlsx_file_path = ""
-    input_text = ""
+    # Selenium
+    driver = None
+    options = None
+    
     # elements
     book_title_box = None
     save_btn = None
@@ -34,9 +29,10 @@ class Thread(QThread):
     syn_tex_box = None
     mark_editor = None
 
+    # loop option
     select = 0
     
-    def __init__(self , id, pw, txt_path , xlsx_path, input_text, select):
+    def __init__(self , id, pw, txt_path , xlsx_path, tab2_input, select):
         super().__init__()
         try:
             chromedriver_autoinstaller.install()
@@ -52,7 +48,7 @@ class Thread(QThread):
         self.pw = pw
         self.txt_file_path = txt_path
         self.xlsx_file_path = xlsx_path
-        self.input_text = input_text
+        self.tab2_input = tab2_input
         self.select = select
         
     def loop(self):
@@ -67,12 +63,12 @@ class Thread(QThread):
             common(self)
 
         elif self.select == 3:
-            loop3(self.book_title_box,self.input_text)
+            loop3(self.book_title_box,self.tab2_input)
             self.progress.emit(int(self.val*100/self.num))
             common(self)
 
         elif self.select == 4:
-            loop4(self.book_title_box,self.input_text)
+            loop4(self.book_title_box,self.tab2_input)
             self.progress.emit(int(self.val*100/self.num))
             common(self)
         
@@ -93,10 +89,16 @@ class Thread(QThread):
 
         
     def run(self):
-        self.flag = True
         self.context.emit("진행중")
         self.driver = webdriver.Chrome(options=self.options)
         self.flag = klas_upload(self)
+        # enter mark editor tab & find essential elements
+        self.book_title_box = WebDriverWait(self.driver, 10).until(EC.presence_of_element_located((By.XPATH, '//*[@id="book_title"]')))    
+        self.save_btn = self.driver.find_element(By.XPATH, '//*[@id="marcForm"]/div[2]/div[1]/input[18]')
+        self.next_btn = self.driver.find_element(By.XPATH, '//*[@id="nextBtn"]')
+        self.syn_tex_box = self.driver.find_element(By.XPATH, '//*[@id="syntexMsg_div"]')
+        self.mark_editor = self.driver.find_element(By.XPATH, '//*[@id="marcEditor"]')
+        
         time.sleep(2)
         while True:
             if(self.flag == False):

@@ -471,7 +471,7 @@
     <property name="frameShadow">
      <enum>QFrame::Raised</enum>
     </property>
-    <widget class="QLabel" name="label_txt">
+    <widget class="QLabel" name="label_top">
      <property name="geometry">
       <rect>
        <x>10</x>
@@ -482,7 +482,6 @@
      </property>
      <property name="font">
       <font>
-       <weight>75</weight>
        <bold>true</bold>
       </font>
      </property>
@@ -506,7 +505,7 @@
       <string>파일 추가</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="btn_id">
+    <widget class="QPushButton" name="btn_login">
      <property name="geometry">
       <rect>
        <x>170</x>
@@ -572,7 +571,6 @@
      <property name="font">
       <font>
        <pointsize>20</pointsize>
-       <weight>75</weight>
        <bold>true</bold>
       </font>
      </property>
@@ -618,7 +616,6 @@
      <property name="font">
       <font>
        <pointsize>20</pointsize>
-       <weight>75</weight>
        <bold>true</bold>
        <underline>false</underline>
        <kerning>true</kerning>
@@ -654,13 +651,13 @@
       </rect>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>2</number>
      </property>
      <widget class="QWidget" name="File_tab">
       <attribute name="title">
        <string>엑셀 파일 추가</string>
       </attribute>
-      <widget class="QLabel" name="label_xlsx">
+      <widget class="QLabel" name="label_tab1">
        <property name="geometry">
         <rect>
          <x>10</x>
@@ -676,7 +673,7 @@
         <set>Qt::LinksAccessibleByMouse</set>
        </property>
       </widget>
-      <widget class="QPushButton" name="btn_xlsx_add">
+      <widget class="QPushButton" name="btn_tab1">
        <property name="geometry">
         <rect>
          <x>110</x>
@@ -689,7 +686,7 @@
         <string>파일 추가</string>
        </property>
       </widget>
-      <widget class="QCheckBox" name="CB_add_front_file">
+      <widget class="QCheckBox" name="tab1_cb0">
        <property name="geometry">
         <rect>
          <x>10</x>
@@ -702,7 +699,7 @@
         <string> 앞 추 가</string>
        </property>
       </widget>
-      <widget class="QCheckBox" name="CB_add_back_file">
+      <widget class="QCheckBox" name="tab1_cb1">
        <property name="geometry">
         <rect>
          <x>10</x>
@@ -715,7 +712,7 @@
         <string> 뒤 추 가</string>
        </property>
       </widget>
-      <widget class="QPushButton" name="btn_start">
+      <widget class="QPushButton" name="btn_start0">
        <property name="geometry">
         <rect>
          <x>110</x>
@@ -728,7 +725,7 @@
         <string>시작</string>
        </property>
       </widget>
-      <widget class="QPushButton" name="btn_pause_file">
+      <widget class="QPushButton" name="btn_pause0">
        <property name="geometry">
         <rect>
          <x>0</x>
@@ -746,7 +743,7 @@
       <attribute name="title">
        <string>텍스트 추가</string>
       </attribute>
-      <widget class="QLineEdit" name="label_input">
+      <widget class="QLineEdit" name="label_tab2">
        <property name="geometry">
         <rect>
          <x>0</x>
@@ -768,7 +765,7 @@
         <enum>QLineEdit::Normal</enum>
        </property>
       </widget>
-      <widget class="QPushButton" name="btn_input">
+      <widget class="QPushButton" name="btn_tab2">
        <property name="geometry">
         <rect>
          <x>120</x>
@@ -781,7 +778,7 @@
         <string>적용</string>
        </property>
       </widget>
-      <widget class="QPushButton" name="btn_start_2">
+      <widget class="QPushButton" name="btn_start1">
        <property name="geometry">
         <rect>
          <x>110</x>
@@ -820,7 +817,7 @@
         <string> 뒤 추 가</string>
        </property>
       </widget>
-      <widget class="QPushButton" name="btn_pause_txt">
+      <widget class="QPushButton" name="btn_pause1">
        <property name="geometry">
         <rect>
          <x>0</x>
@@ -838,7 +835,7 @@
       <attribute name="title">
        <string>삭제</string>
       </attribute>
-      <widget class="QCheckBox" name="CB_auto_int">
+      <widget class="QCheckBox" name="tab3_cb0">
        <property name="geometry">
         <rect>
          <x>10</x>
@@ -851,7 +848,7 @@
         <string>  숫 자</string>
        </property>
       </widget>
-      <widget class="QCheckBox" name="CB_auto_txt">
+      <widget class="QCheckBox" name="tab3_cb1">
        <property name="geometry">
         <rect>
          <x>10</x>
@@ -864,7 +861,7 @@
         <string>  문 자 </string>
        </property>
       </widget>
-      <widget class="QLabel" name="label_Auto">
+      <widget class="QLabel" name="label_tab3">
        <property name="geometry">
         <rect>
          <x>10</x>
@@ -880,7 +877,7 @@
         <set>Qt::NoTextInteraction</set>
        </property>
       </widget>
-      <widget class="QPushButton" name="btn_start_3">
+      <widget class="QPushButton" name="btn_start2">
        <property name="geometry">
         <rect>
          <x>110</x>
@@ -893,7 +890,7 @@
         <string>시작</string>
        </property>
       </widget>
-      <widget class="QPushButton" name="btn_pause_auto">
+      <widget class="QPushButton" name="btn_pause2">
        <property name="geometry">
         <rect>
          <x>0</x>
@@ -938,12 +935,12 @@
      <number>0</number>
     </property>
    </widget>
-   <widget class="QLabel" name="label_ing">
+   <widget class="QLabel" name="label_status">
     <property name="geometry">
      <rect>
-      <x>160</x>
+      <x>150</x>
       <y>400</y>
-      <width>71</width>
+      <width>91</width>
       <height>31</height>
      </rect>
     </property>
@@ -953,7 +950,7 @@
      </font>
     </property>
     <property name="text">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#b35941;&quot;&gt;대기중&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; color:#b35941;&quot;&gt;대기중&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
    </widget>
   </widget>

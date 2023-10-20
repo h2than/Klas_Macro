@@ -9,29 +9,17 @@ from gui import Ui_MainWindow
 from Thread_ import *
 
 # 에러 메세지
-def login_check(id,pw):
-    if id == "" or pw == "":
-        infomsg("id, pw 를 입력하세요")
-    else : return True
-
-def infomsg(text):
-    info_box = QMessageBox()
-    info_box.setIcon(QMessageBox.information)
-    info_box.setText(text)
-    info_box.setWindowTitle("알림")
-    info_box.exec_()
 
 # PyQt5 메인 윈도우
 class WindowClass(QMainWindow, Ui_MainWindow):
     
     # 변수
+    tab2_input = ""
     id = ""
     pw = ""
-    txt_file_path = ""
-    xlsx_file_path = ""
-    opt = 0 
-    input_text = ""
-    
+    txt_path = ""
+    xlsx_path = ""
+    opt = 0
     
     def __init__(self):
         super( ).__init__()
@@ -44,75 +32,78 @@ class WindowClass(QMainWindow, Ui_MainWindow):
 
         # 상단 Frame
         self.btn_txt_add.clicked.connect(self.txt_add)
-        self.btn_xlsx_add.clicked.connect(self.xlsx_add)
-        self.btn_id.clicked.connect(self.adp_id_pw) # label_id , label_pw
+        self.btn_login.clicked.connect(self.login) # label_id , label_pw
         # 종료 버튼
         self.btn_Quit.clicked.connect(self.exit)
 
-        # 추가
-        self.CB_add_front_file.stateChanged.connect(self.chk_file)
-        self.CB_add_back_file.stateChanged.connect(self.chk_file)
-        self.btn_start.clicked.connect(self.start_btn)
-        self.btn_pause_file.clicked.connect(self.pause)
-        
-        # 입력 
-        self.btn_input.clicked.connect(self.adp_input_text) # label_input
-        self.btn_start_2.clicked.connect(self.start_btn_2)
-        self.CB_back_add_file.stateChanged.connect(self.input_title_chk)
-        self.CB_front_add_text.stateChanged.connect(self.input_title_chk)
-        self.btn_pause_txt.clicked.connect(self.pause)
-        
-        # 자동
-        self.CB_auto_int.stateChanged.connect(self.chk_auto)
-        self.CB_auto_txt.stateChanged.connect(self.chk_auto)
-        self.btn_start_3.clicked.connect(self.start_btn_3)
-        self.btn_pause_auto.clicked.connect(self.pause)
+        # tab1 xlsx
+        self.btn_tab1.clicked.connect(self.tab1_apt)
+        self.tab1_cb0.stateChanged.connect(self.tab1_chk)
+        self.tab1_cb1.stateChanged.connect(self.tab1_chk)
+        self.btn_start0.clicked.connect(self.tab1_start_btn)
+        self.btn_pause0.clicked.connect(self.pause)
     
-    def errormsg(self, text):
-        error_box = QMessageBox(self)
-        error_box.setIcon(QMessageBox.Critical)
-        error_box.setText(text)
-        error_box.setWindowTitle("Error")
-        error_box.exec_()
-
+        # tab2 [text]
+        self.btn_input.clicked.connect(self.tab2_apt) # label_tab2
+        self.tab2_cb0.stateChanged.connect(self.tab2_chk)
+        self.tab2_cb1.stateChanged.connect(self.tab2_chk)
+        self.btn_start1.clicked.connect(self.tab2_start_btn)
+        self.btn_pause1.clicked.connect(self.pause)
+        
+        # tab3 remove
+        self.tab3_cb0.stateChanged.connect(self.tab3_chk)
+        self.tab3_cb1.stateChanged.connect(self.tab3_chk)
+        self.btn_start2.clicked.connect(self.tab3_start_btn)
+        self.btn_pause2.clicked.connect(self.pause)
 
     # 탭 전환시
     def tab_changed(self):
         self.opt = 0
+        self.tab1_cb0.setChecked(False)
+        self.tab1_cb1.setChecked(False)
+        self.tab2_cb0.setChecked(False)
+        self.tab2_cb1.setChecked(False)
+        self.tab3_cb0.setChecked(False)
+        self.tab3_cb1.setChecked(False)
         
-    # 일시정지
-    def pause(self):
-        if self.t1 != None:
-            if self.t1.flag == True :
-                self.t1.flag = False
-                self.label_ing.setText("일시정지")
-            else:
-                self.t1.flag = True
-                self.label_ing.setText("진행중")
+    def essential_val_check(self, path):
+        if self.opt == 0 and path == "" :
+            self.errormsg(text="옵션을 다시 확인 해주세요")
+            return False
+        if self.label_top.text() == "등록번호":
+            self.errormsg(text="등록번호 파일을 추가해 주세요")
+            return False
+        if self.id == "" or self.pw == "" :
+            self.errormsg("id, pw 를 입력하세요")
+            return False
+        return True
         
-    # 강제 종료
-    def exit(self):
-        if self.t1 != None:
-            self.t1.terminate()
-            time.sleep(3)
-            self.t1 = None
-        app.quit()
-        
-    # 상단 Frame
+    def macro_run(self, path, select):
+        is_ready = self.essential_val_check(self,path)
+        if is_ready :
+            self.btn_start.setEnable(False)
+            self.btn_start_2.setEnable(False)
+            self.btn_start_3.setEnable(False)
+            self.t1 = Thread(id=self.id, pw=self.pw, txt_path=self.txt_path,xlsx_path=self.xlsx_path,tab2_input=self.tab2_input, select=select)
+            self.t1.error.connect(self.errormsg)
+            self.t1.context.connect(self.state)
+            self.t1.progress.connect(self.onProgress)
+            self.t1.start()
+            
+    # 등록번호 upload
     def txt_add(self):
-        
         default_path = QDir.homePath() +'/Desktop'
         
         file_dialog = QFileDialog(self,'Open File', default_path, 'txt Files (*.txt)')
         file_dialog.setDirectory(default_path)
         
         if file_dialog.exec_() == QDialog.Accepted:
-            self.txt_file_path = file_dialog.selectedFiles()[0]
+            self.txt_path = file_dialog.selectedFiles()[0]
             fileName = file_dialog.selectedFiles()[0].split('/')[-1]
-            self.label_txt.setText(fileName)
+            self.label_top.setText(fileName)
     
-    # 상단 Frame id, pw 적용
-    def adp_id_pw(self):
+    # id,pw 
+    def login(self):
 
         if self.label_id.isEnabled():
             self.id = self.label_id.text()
@@ -129,159 +120,110 @@ class WindowClass(QMainWindow, Ui_MainWindow):
     
 # 탭 위젯
     
-    # 탭 1 파일 추가
+    # 엑셀 파일 추가
     
-    def xlsx_add(self):
-        
+    def tab1_apt(self):
         default_path = QDir.homePath() +'/Desktop'
-        
         file_dialog = QFileDialog(self,'Open File', default_path, 'Xlsx Files (*.xlsx)')
         file_dialog.setDirectory(default_path)
         
         if file_dialog.exec_() == QDialog.Accepted:
-            self.xlsx_file_path = file_dialog.selectedFiles()[0]
+            self.xlsx_path = file_dialog.selectedFiles()[0]
             fileName = file_dialog.selectedFiles()[0].split('/')[-1]
-            self.label_xlsx.setText(fileName)
-        else:
-            self.xlsx_file_path = ""
-    
+            self.label_tab1.setText(fileName)
+
     # 탭1 옵션 체크   
-    def chk_file(self,state):
-        
-        self.opt = 0
-        if state == Qt.Checked:
-            if self.sender() == self.CB_add_front_file:
-                self.CB_add_back_file.setChecked(False)
-                self.opt = 1
-            elif self.sender() == self.CB_add_back_file:
-                self.CB_add_front_file.setChecked(False)
-                self.opt = 2
+    def tab1_chk(self):
+        if self.tab1_cb0.isChecked() :
+            self.tab1_cb1.setChecked(False)
+            self.opt = 1
+        if self.tab1_cb1.isChecked() :
+            self.tab1_cb0.setChecked(False)
+            self.opt = 2
                 
     # 탭 1 시작 버튼
-    def start_btn(self):
-        if self.opt == 0 and self.xlsx_file_path == ""  :
-            self.errormsg(text="옵션을 다시 확인 해주세요")
-            if self.label_txt.text() == "등록번호":
-                self.errormsg(text="등록번호 파일을 추가해 주세요")
-        else :
-            if login_check(self.id,self.pw) :
-                try:
-                    if self.opt == 1:
-                        self.btn_start_2.setEnabled(False)
-                        self.t1 = Thread(id=self.id, pw=self.pw, txt_path=self.txt_file_path,xlsx_path=self.xlsx_file_path,input_text="", select=1)
-                        self.t1.error.connect(self.errormsg)
-                        self.t1.context.connect(self.state)
-                        self.t1.progress.connect(self.onProgress)
-                        self.t1.start()
-                    else:
-                        self.btn_start_2.setEnabled(False)
-                        self.t1 = Thread(id=self.id, pw=self.pw, txt_path=self.txt_file_path,xlsx_path=self.xlsx_file_path,input_text="", select=2)
-                        self.t1.error.connect(self.errormsg)
-                        self.t1.context.connect(self.state)
-                        self.t1.progress.connect(self.onProgress)
-                        self.t1.start()
-                except:
-                    pass
-
+    def tab1_start_btn(self):
+        if self.opt == 1 :
+            self.macro_run(self, self.xlsx_path,select=1)
+        elif self.opt == 2 :
+            self.macro_run(self, self.xlsx_path,select=2)
     # 탭 2 텍스트 적용
 
-    def adp_input_text(self):
-                
-        if self.label_input.isEnabled():
-            self.input_text = self.label_input.text()
-            self.label_input.setDisabled(True)
+    def tab2_apt(self):
+        if self.label_tab2.isEnabled():
+            self.tab2_input = self.label_tab2.text()
+            self.label_tab2.setDisabled(True)
         else :
-            self.label_input.clear()
-            self.input_text = ""
-            self.label_input.setDisabled(False)
+            self.label_tab2.clear()
+            self.tab2_input = ""
+            self.label_tab2.setDisabled(False)
         
     # 탭 2 텍스트 옵션 체크
-    def input_title_chk(self,state):
-        
-        self.opt = 0
-        if state == Qt.Checked:
-            if self.sender() == self.CB_front_add_text:
-                self.CB_back_add_file.setChecked(False)
-                self.opt = 1
-            elif self.sender() == self.CB_back_add_file:
-                self.CB_front_add_text.setChecked(False)
-                self.opt = 2
+    def tab2_chk(self):
+        if self.tab2_cb0.isChecked() :
+            self.tab2_cb1.setChecked(False)
+            self.opt = 1
+        if self.tab2_cb1.isChecked() :
+            self.tab2_cb0.setChecked(False)
+            self.opt = 2
 
     # 탭 2 시작 버튼
-    def start_btn_2(self):
-        if self.opt == 0 or self.input_text == "" :
-            self.errormsg(text="옵션을 다시 확인 해주세요")
-            if self.label_txt.text() == "등록번호":
-                self.errormsg(text="등록번호 파일을 추가해 주세요")
-        else :
-            if login_check(self.id,self.pw) :
-                try:
-                    if self.opt == 1:
-                        self.btn_start_2.setEnabled(False)
-                        self.t1 = Thread(id=self.id, pw=self.pw, txt_path=self.txt_file_path,xlsx_path="",input_text=self.input_text, select=3)
-                        self.t1.error.connect(self.errormsg)
-                        self.t1.context.connect(self.state)
-                        self.t1.progress.connect(self.onProgress)
-                        self.t1.start()
-                    else:
-                        self.btn_start_2.setEnabled(False)
-                        self.t1 = Thread(id=self.id, pw=self.pw, txt_path=self.txt_file_path,xlsx_path="",input_text=self.input_text, select=4)
-                        self.t1.error.connect(self.errormsg)
-                        self.t1.context.connect(self.state)
-                        self.t1.progress.connect(self.onProgress)
-                        self.t1.start()
-                except:
-                    pass
+    def tab2_start_btn(self):
+        if self.opt == 1 :
+            self.macro_run(self,self.tab2_input,select=3)
+        elif self.opt == 2 :
+            self.macro_run(self,self.tab2_input,select=4)
         
     # 탭 3 옵션 
-    def chk_auto(self):
-        self.opt = 0
-        if self.CB_auto_int.isChecked():
-            self.opt += 1
-        if self.CB_auto_txt.isChecked():
-            self.opt += 2
-            
-    # 탭 3 시작 버튼
-    def start_btn_3(self):
-        if not self.CB_auto_int.isChecked() and not self.CB_auto_txt.isChecked() :
-            self.errormsg(text="체크 박스를 선택해 주세요!")
-            if self.label_txt.text() == "등록번호":
-                self.errormsg(text="등록번호 파일을 추가해 주세요")
-        else:
-            if login_check(self.id,self.pw) :
-                try:
-                    if self.opt == 1:
-                        self.btn_start_3.setEnabled(False)
-                        self.t1 = Thread(id=self.id, pw=self.pw, txt_path=self.txt_file_path,xlsx_path="",input_text="", select=5)
-                        self.t1.error.connect(self.errormsg)
-                        self.t1.context.connect(self.state)
-                        self.t1.progress.connect(self.onProgress)
-                        self.t1.start()
-                    elif self.opt == 2:
-                        self.btn_start_3.setEnabled(False)
-                        self.t1 = Thread(id=self.id, pw=self.pw, txt_path=self.txt_file_path,xlsx_path="",input_text="", select=6)
-                        self.t1.error.connect(self.errormsg)
-                        self.t1.context.connect(self.state)
-                        self.t1.progress.connect(self.onProgress)
-                        self.t1.start()
-                    else:
-                        self.btn_start_3.setEnabled(False)
-                        self.t1 = Thread(id=self.id, pw=self.pw, txt_path=self.txt_file_path,xlsx_path="",input_text="", select=7)
-                        self.t1.error.connect(self.errormsg)
-                        self.t1.context.connect(self.state)
-                        self.t1.progress.connect(self.onProgress)
-                        self.t1.start()
-                except:
-                    pass
+    def tab3_chk(self):
+        if self.tab3_cb0.isChecked() and self.tab3_cb1.isChecked() :
+            self.opt = 3
+        else :
+            if self.tab3_cb0.isChecked():
+                self.opt = 1
+            if self.tab3_cb1.isChecked():
+                self.opt = 2
                 
+    # 탭 3 시작 버튼
+    def tab3_start_btn(self):
+        if self.opt == 1:
+            self.macro_run(self, None, select=5)
+        elif self.opt == 2:
+            self.macro_run(self, None, select=6)
+        elif self.opt == 3:
+            self.macro_run(self, None, select=7)
+    
+    def errormsg(self, text):
+        error_box = QMessageBox(self)
+        error_box.setIcon(QMessageBox.Critical)
+        error_box.setText(text)
+        error_box.setWindowTitle("Error")
+        error_box.exec_()
+    
+    # 일시정지
+    def pause(self):
+        try:
+            if self.t1.flag :
+                self.t1.flag = False
+                self.label_status.setText("일시정지")
+            else:
+                self.t1.flag = True
+                self.label_status.setText("진행중")
+        except:
+            pass
+        
+    # 강제 종료
+    def exit(self):
+        app.quit()
+    
     # 스레드 slot
     
     def state(self, context):
-        self.label_ing.setText(context)
+        self.label_status.setText(context)
             
     def onProgress(self, value):
         self.progressBar.setValue(value)
-            
+
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)

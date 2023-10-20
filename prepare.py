@@ -1,12 +1,9 @@
 import re
 import os
 
-from selenium import webdriver
-from selenium.webdriver import ActionChains 
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.support.ui import Select
 from selenium.webdriver.support.ui import WebDriverWait
 
 import openpyxl
@@ -61,25 +58,25 @@ def loop2(book_title_box,xlsx_file_path, val):
     book_title_box.send_keys(title)
     book_title_box.send_keys(Keys.ENTER)
         
-def loop3(book_title_box,input_text):
+def loop3(book_title_box,tab2_input):
     title = str(book_title_box.get_attribute('value'))
     pattern = r'\[.*\]'
 
     if re.search(pattern, title):
         return
 
-    title = input_text + title
+    title = tab2_input + title
     book_title_box.clear()
     book_title_box.send_keys(title)
     book_title_box.send_keys(Keys.ENTER)
     
-def loop4(book_title_box,input_text):
+def loop4(book_title_box,tab2_input):
     title = str(book_title_box.get_attribute('value'))
     pattern = r'\[.*\]'
 
     if re.search(pattern, title):
         return
-    title = title + input_text
+    title = title + tab2_input
     book_title_box.clear()
     book_title_box.send_keys(title)
     book_title_box.send_keys(Keys.ENTER)
@@ -126,31 +123,23 @@ def common(self):
 
     WebDriverWait(self.driver, 10)
 
-    try:
-        ddc = WebDriverWait(self.driver, 3).until(EC.presence_of_element_located((By.XPATH, '//*[@id="ddc_class"]')))
-        ddc_text = str(ddc.get_attribute('value'))
-        if not ddc_text.isnumeric() and len(ddc_text) > 0:
-            ddc.clear()
-            ddc.send_keys(Keys.ENTER)
-    except :
-        pass
+    ddc = WebDriverWait(self.driver, 3).until(EC.presence_of_element_located((By.XPATH, '//*[@id="ddc_class"]')))
+    ddc_text = str(ddc.get_attribute('value'))
+    if not ddc_text.isnumeric() and len(ddc_text) > 0:
+        ddc.clear()
+        ddc.send_keys(Keys.ENTER)
 
-    try :
-        self.driver.execute_script("arguments[0].click()", self.save_btn)
-        alert_ok(self)
-    except:
-        pass
+    self.driver.execute_script("arguments[0].click()", self.save_btn)
+    alert_ok(self)
 
-    try:
-        dup_msg = WebDriverWait(self.driver, 3).until(EC.presence_of_element_located((By.XPATH, '/html/body/div[7]')))
+    dup_msg = WebDriverWait(self.driver, 3).until(EC.presence_of_element_located((By.XPATH, '/html/body/div[7]')))
         # 중복된 등록번호 알림
-        if dup_msg.is_displayed() == True:
-            dup_btn = self.driver.find_element(By.XPATH, '//*[@id="confirm_ok"]')
-            self.driver.execute_script("arguments[0].click()", dup_btn)
-    except:
-        pass
+    if dup_msg.is_displayed() == True:
+        dup_btn = self.driver.find_element(By.XPATH, '//*[@id="confirm_ok"]')
+        self.driver.execute_script("arguments[0].click()", dup_btn)
 
     try:
+        # markup Systex error
         is_error = self.syn_tex_box.find_element(By.TAG_NAME, 'div').text
         if len(is_error) > 0:
                     
@@ -168,14 +157,15 @@ def common(self):
     except:
         pass
 
-    try :
-        failure_btn = self.driver.find_element(By.XPATH, '//*[@id="failAlertbtn"]')
-        self.driver.execute_script("arguments[0].click()", failure_btn)
-        self.mark_editor.send_keys(Keys.ENTER)
-        self.driver.execute_script("arguments[0].click()", self.save_btn)
-        alert_ok(self)
-    except :
-        pass
+    # try :
+    #     # Other Failure
+    #     failure_btn = self.driver.find_element(By.XPATH, '//*[@id="failAlertbtn"]')
+    #     self.driver.execute_script("arguments[0].click()", failure_btn)
+    #     self.mark_editor.send_keys(Keys.ENTER)
+    #     self.driver.execute_script("arguments[0].click()", self.save_btn)
+    #     alert_ok(self)
+    # except :
+    #     pass
 
 def klas_upload(self):
     try :
@@ -219,10 +209,3 @@ def klas_upload(self):
     except :
         self.error.emit("MarkEditor Access Fail")
         return False
-    # root elements
-
-    self.book_title_box = WebDriverWait(self.driver, 10).until(EC.presence_of_element_located((By.XPATH, '//*[@id="book_title"]')))    
-    self.save_btn = self.driver.find_element(By.XPATH, '//*[@id="marcForm"]/div[2]/div[1]/input[18]')
-    self.next_btn = self.driver.find_element(By.XPATH, '//*[@id="nextBtn"]')
-    self.syn_tex_box = self.driver.find_element(By.XPATH, '//*[@id="syntexMsg_div"]')
-    self.mark_editor = self.driver.find_element(By.XPATH, '//*[@id="marcEditor"]')

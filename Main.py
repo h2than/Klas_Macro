@@ -161,10 +161,9 @@ class WindowClass(QMainWindow, Ui_MainWindow):
     def tab1_start_btn(self):
         if self.opt == 1 :
             self.slt = 1
-            self.macro_run()
         elif self.opt == 2 :
             self.slt = 2
-            self.macro_run()
+        self.macro_run()
     # 탭 2 텍스트 적용
 
     def tab2_apt(self):
@@ -189,10 +188,9 @@ class WindowClass(QMainWindow, Ui_MainWindow):
     def tab2_start_btn(self):
         if self.opt == 1 :
             self.slt = 3
-            self.macro_run()
         elif self.opt == 2 :
             self.slt = 4
-            self.macro_run()
+        self.macro_run()
         
     # 탭 3 옵션 
     def tab3_chk(self):
@@ -206,14 +204,12 @@ class WindowClass(QMainWindow, Ui_MainWindow):
     def tab3_start_btn(self):
         if self.opt == 1:
             self.slt = 5
-            self.macro_run()
         elif self.opt == 2:
             self.slt = 6
-            self.macro_run()
         elif self.opt == 3:
             self.slt = 7
-            self.macro_run()
-    
+        self.macro_run()
+
     def errormsg(self, text):
         error_box = QMessageBox(self)
         error_box.setIcon(QMessageBox.Critical)

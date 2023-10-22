@@ -158,7 +158,6 @@ class Thread(QThread):
         worksheet = workbook.active
 
         # A열의 모든 값을 리스트로 저장
-        self.col = []
         for cell in worksheet['A']:
             self.col.append(cell.value)
         
@@ -175,7 +174,7 @@ class Thread(QThread):
             self.title = self.col[self.val] + self.title
             self.book_title_box.clear()
             self.finish()
-            self.common(self)
+            self.common()
 
         elif self.select == 2:
             if re.search(self.pattern, self.title):
@@ -183,7 +182,7 @@ class Thread(QThread):
             self.title = self.title + self.col[self.val]
             self.book_title_box.clear()
             self.finish()
-            self.common(self)
+            self.common()
 
         elif self.select == 3:
             if re.search(self.pattern, self.title):
@@ -191,13 +190,13 @@ class Thread(QThread):
             self.title = self.tab2_input + self.title
             self.book_title_box.clear()
             self.finish()
-            self.common(self)
+            self.common()
 
         elif self.select == 4:
             self.title = self.title + self.tab2_input
             self.book_title_box.clear()
             self.finish()
-            self.common(self)
+            self.common()
         
         elif self.select <= 5:
             matches = self.pattern.findall(self.title)
@@ -206,7 +205,7 @@ class Thread(QThread):
                 self.title = re.sub(self.pattern, '',self.title)
                 self.title = self.title.strip()
                 self.finish()
-            self.common(self)
+            self.common()
         
     def run(self):
         self.context.emit("진행중")

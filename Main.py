@@ -26,7 +26,6 @@ class WindowClass(QMainWindow, Ui_MainWindow):
     txt_path = ""
     xlsx_path = ""
     opt = 0
-    slt = 0
 
     def __init__(self):
         super( ).__init__()
@@ -77,6 +76,7 @@ class WindowClass(QMainWindow, Ui_MainWindow):
         if self.label_top.text() == "등록번호":
             self.errormsg(text="등록번호 파일을 추가해 주세요")
             return False
+        
         if self.id == "" or self.pw == "" :
             self.errormsg("id, pw 를 입력하세요")
             return False
@@ -84,9 +84,13 @@ class WindowClass(QMainWindow, Ui_MainWindow):
         if self.slt <= 2 :
             if self.opt == 0 and self.xlsx_path == "" :
                 self.errormsg(text="옵션을 다시 확인 해주세요")
-                return False
+                return False  
         elif self.slt <= 4 :
             if self.opt == 0 and self.tab2_input == "" :
+                self.errormsg(text="옵션을 다시 확인 해주세요")
+                return False
+        else:
+            if self.opt == 0 :
                 self.errormsg(text="옵션을 다시 확인 해주세요")
                 return False
         
@@ -101,7 +105,7 @@ class WindowClass(QMainWindow, Ui_MainWindow):
                 self.btn_start_3.setDisabled(True)
             except:
                 pass
-            self.mainthread = Thread(id=self.id, pw=self.pw, txt_path=self.txt_path,xlsx_path=self.xlsx_path,tab2_input=self.tab2_input, select=self.slt)
+            self.mainthread = Thread(id=self.id, pw=self.pw, txt_path=self.txt_path,xlsx_path=self.xlsx_path,tab2_input=self.tab2_input, select=self.opt)
             self.mainthread.error.connect(self.errormsg)
             self.mainthread.context.connect(self.state)
             self.mainthread.progress.connect(self.onProgress)
@@ -150,6 +154,7 @@ class WindowClass(QMainWindow, Ui_MainWindow):
 
     # 탭1 옵션 체크   
     def tab1_chk(self):
+        self.opt = 0
         if self.tab1_cb0.isChecked() :
             self.tab1_cb1.setChecked(False)
             self.opt = 1
@@ -159,10 +164,6 @@ class WindowClass(QMainWindow, Ui_MainWindow):
                 
     # 탭 1 시작 버튼
     def tab1_start_btn(self):
-        if self.opt == 1 :
-            self.slt = 1
-        elif self.opt == 2 :
-            self.slt = 2
         self.macro_run()
     # 탭 2 텍스트 적용
 
@@ -177,37 +178,31 @@ class WindowClass(QMainWindow, Ui_MainWindow):
         
     # 탭 2 텍스트 옵션 체크
     def tab2_chk(self):
+        self.opt = 0
         if self.tab2_cb0.isChecked() :
             self.tab2_cb1.setChecked(False)
-            self.opt = 1
+            self.opt = 3
         if self.tab2_cb1.isChecked() :
             self.tab2_cb0.setChecked(False)
-            self.opt = 2
+            self.opt = 4
 
     # 탭 2 시작 버튼
     def tab2_start_btn(self):
-        if self.opt == 1 :
-            self.slt = 3
-        elif self.opt == 2 :
-            self.slt = 4
         self.macro_run()
         
     # 탭 3 옵션 
     def tab3_chk(self):
         self.opt = 0
-        if self.tab3_cb0.isChecked():
-            self.opt += 1
-        if self.tab3_cb1.isChecked():
-            self.opt += 2
+        if self.tab3_cb0.isChecked() and self.tab3_cb1.isChecked():
+            self.opt = 7
+        else:
+            if self.tab3_cb0.isChecked():
+                self.opt = 5
+            if self.tab3_cb1.isChecked():
+                self.opt = 6
                 
     # 탭 3 시작 버튼
     def tab3_start_btn(self):
-        if self.opt == 1:
-            self.slt = 5
-        elif self.opt == 2:
-            self.slt = 6
-        elif self.opt == 3:
-            self.slt = 7
         self.macro_run()
 
     def errormsg(self, text):

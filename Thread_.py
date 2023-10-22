@@ -240,7 +240,7 @@ class Thread(QThread):
 
         if self.opt > 4:
             re_to_call = self.re_mapping.get(self.opt)
-            self.pattern = re_to_call
+            self.pattern = re_to_call()
             while True:
                 if self.flag == False:
                     time.sleep(1)  # 일시정지

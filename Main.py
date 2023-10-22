@@ -81,11 +81,11 @@ class WindowClass(QMainWindow, Ui_MainWindow):
             self.errormsg("id, pw 를 입력하세요")
             return False
 
-        if self.slt <= 2 :
+        if self.opt <= 2 :
             if self.opt == 0 and self.xlsx_path == "" :
                 self.errormsg(text="옵션을 다시 확인 해주세요")
                 return False  
-        elif self.slt <= 4 :
+        elif self.opt <= 4 :
             if self.opt == 0 and self.tab2_input == "" :
                 self.errormsg(text="옵션을 다시 확인 해주세요")
                 return False
@@ -105,7 +105,7 @@ class WindowClass(QMainWindow, Ui_MainWindow):
                 self.btn_start_3.setDisabled(True)
             except:
                 pass
-            self.mainthread = Thread(id=self.id, pw=self.pw, txt_path=self.txt_path,xlsx_path=self.xlsx_path,tab2_input=self.tab2_input, select=self.opt)
+            self.mainthread = Thread(id=self.id, pw=self.pw, txt_path=self.txt_path,xlsx_path=self.xlsx_path,tab2_input=self.tab2_input, opt=self.opt)
             self.mainthread.error.connect(self.errormsg)
             self.mainthread.context.connect(self.state)
             self.mainthread.progress.connect(self.onProgress)

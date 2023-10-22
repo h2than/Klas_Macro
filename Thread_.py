@@ -34,6 +34,10 @@ class Thread(QThread):
     syn_tex_box = None
     mark_editor = None
 
+    ddc = None
+    dup_msg = None
+    dup_btn = None
+
     # loop option
     opt = 0
     col = []
@@ -84,11 +88,10 @@ class Thread(QThread):
     def common(self):
         WebDriverWait(self.driver, 10)
 
-        ddc = WebDriverWait(self.driver, 3).until(EC.presence_of_element_located((By.XPATH, '//*[@id="ddc_class"]')))
-        ddc_text = str(ddc.get_attribute('value'))
+        ddc_text = str(self.ddc.get_attribute('value'))
         if not ddc_text.isnumeric() and len(ddc_text) > 0:
-            ddc.clear()
-            ddc.send_keys(Keys.ENTER)
+            self.ddc.clear()
+            self.ddc.send_keys(Keys.ENTER)
 
         self.driver.execute_script("arguments[0].click()", self.save_btn)
         self.alert_ok()
@@ -121,13 +124,13 @@ class Thread(QThread):
         try:
             self.driver.get("https://klas.jeonju.go.kr/klas3/Admin/")
             
-            id_box = self.driver.find_element(By.ID, 'manager_id')
+            id_box = self.driver.find_element(By.XPATH, '//*[@id="manager_id"]')
             id_box.send_keys(self.id)
             
-            pw_box = self.driver.find_element(By.ID, 'password')
+            pw_box = self.driver.find_element(By.XPATH, '//*[@id="password"]')
             pw_box.send_keys(self.pw)
             
-            self.driver.find_element(By.CLASS_NAME, 'btn_login').click()
+            self.driver.find_element(By.XPATH, '//*[@id="loginForm"]/article[1]/input[4]').click()
         except:
             self.error.emit("KLAS Login Fail")
             return False
@@ -136,23 +139,34 @@ class Thread(QThread):
         try:
             self.driver.get("https://klas.jeonju.go.kr/klas3/Books/booksPage/")
             self.driver.execute_script("TitleViewChange('file');")
-            
-            self.driver.find_element(By.CSS_selector, "input[type='file']").send_keys(self.txt_file_path)
+
+            upload_box = WebDriverWait(self.driver, 10).until(
+                EC.presence_of_element_located((By.XPATH, '//*[@id="reg_no_file"]'))
+            )
+            upload_box.send_keys(self.txt_file_path)
             self.driver.execute_script("speciesFileSearch(1, true);")
-            
-            data_num = self.driver.find_element(By.XPATH, '//*[@id="content"]/div[5]/span[2]')
-            self.num = re.sub(r'[^0-9]', '', data_num.text)
+
+
+            label_data_num = WebDriverWait(self.driver, 10).until(
+                EC.presence_of_element_located((By.XPATH, '//*[@id="content"]/div[5]/span[2]'))
+            )
+
+            self.num = re.sub(r'[^0-9]', '', label_data_num.text)
             self.num = int(self.num) - 1
-            
-            box = self.driver.find_element(By.XPATH, '//*[@id="all_solr_check"]')
-            self.driver.execute_script("arguments[0].click()", box)
+
+            select_all_box = WebDriverWait(self.driver, 10).until(
+                EC.presence_of_element_located((By.XPATH, '//*[@id="all_solr_check"]'))
+            )
+            self.driver.execute_script("arguments[0].click()", select_all_box)
         except:
             self.error.emit("KLAS file upload Fail")
             return False
         
         try:
-            marc_editor = self.driver.find_element(By.XPATH, '//*[@id="content"]/div[8]/div/input[3]')
-            self.driver.execute_script("arguments[0].click()", marc_editor)
+            enter_marc_editor_btn = WebDriverWait(self.driver, 10).until(
+                EC.presence_of_element_located((By.XPATH, '//*[@id="content"]/div[8]/div/input[3]'))
+            )
+            self.driver.execute_script("arguments[0].click()", enter_marc_editor_btn)
             self.driver.switch_to.window(self.driver.window_handles[1])
         except:
             self.error.emit("MarkEditor Access Fail")
@@ -222,6 +236,7 @@ class Thread(QThread):
         self.next_btn = self.driver.find_element(By.XPATH, '//*[@id="nextBtn"]')
         self.syn_tex_box = self.driver.find_element(By.XPATH, '//*[@id="syntexMsg_div"]')
         self.mark_editor = self.driver.find_element(By.XPATH, '//*[@id="marcEditor"]')
+        self.ddc = self.driver.find_element(By.XPATH, '//*[@id="ddc_class"]')
 
         if self.opt > 4:
             re_to_call = self.re_mapping.get(self.opt)

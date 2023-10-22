@@ -133,7 +133,7 @@ class Thread(QThread):
             # 자료량 기입
             data_num = self.driver.find_element(By.XPATH, '//*[@id="content"]/div[5]/span[2]')
             self.num = re.sub(r'[^0-9]', '', data_num.text)
-            self.num = int(self.num)
+            self.num = int(self.num)-1
             
             # 체크박스 선택
             box = self.driver.find_element(By.XPATH, '//*[@id="all_solr_check"]')

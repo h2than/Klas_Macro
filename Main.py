@@ -99,17 +99,14 @@ class WindowClass(QMainWindow, Ui_MainWindow):
     def macro_run(self):
         is_ready = self.essential_val_check()
         if is_ready:
-            try:
-                self.btn_start.setDisabled(True)
-                self.btn_start_2.setDisabled(True)
-                self.btn_start_3.setDisabled(True)
-            except:
-                pass
-            self.mainthread = Thread(id=self.id, pw=self.pw, txt_path=self.txt_path,xlsx_path=self.xlsx_path,tab2_input=self.tab2_input, opt=self.opt)
-            self.mainthread.error.connect(self.errormsg)
-            self.mainthread.context.connect(self.state)
-            self.mainthread.progress.connect(self.onProgress)
-            self.mainthread.start()
+                self.btn_start0.setDisabled(True)
+                self.btn_start1.setDisabled(True)
+                self.btn_start2.setDisabled(True)
+                self.mainthread = Thread(id=self.id, pw=self.pw, txt_path=self.txt_path,xlsx_path=self.xlsx_path,tab2_input=self.tab2_input, opt=self.opt)
+                self.mainthread.error.connect(self.errormsg)
+                self.mainthread.context.connect(self.state)
+                self.mainthread.progress.connect(self.onProgress)
+                self.mainthread.start()
             
     # 등록번호 upload
     def txt_add(self):

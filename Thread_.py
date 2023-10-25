@@ -212,12 +212,11 @@ class Thread(QThread):
 
     def loop(self):
         self.title = str(self.book_title_box.get_attribute('value'))
-        if re.search(self.pattern, self.title):
-            return
-        method_to_call = self.method_mapping.get(self.opt)
-        method_to_call()
-        self.book_title_box.clear()
-        self.finish()
+        if not re.search(self.pattern, self.title):
+            method_to_call = self.method_mapping.get(self.opt)
+            method_to_call()
+            self.book_title_box.clear()
+            self.finish()
         self.common()
 
     def run(self):
@@ -228,7 +227,6 @@ class Thread(QThread):
 
         self.driver = webdriver.Chrome(options=self.options)
         self.flag = self.klas_upload()
-        time.sleep(2)
 
         # enter mark editor tab & find essential elements
         self.book_title_box = WebDriverWait(self.driver, 10).until(EC.presence_of_element_located((By.XPATH, '//*[@id="book_title"]')))

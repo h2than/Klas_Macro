@@ -41,7 +41,7 @@ class Thread(QThread):
     # loop option
     opt = 0
     col = []
-    pattern = r'\[.*\]'
+    pattern = None
     title = ""
     
     def __init__(self, id, pw, txt_path, xlsx_path, tab2_input, opt):
@@ -63,18 +63,25 @@ class Thread(QThread):
         self.xlsx_file_path = xlsx_path
         self.tab2_input = tab2_input
         self.opt = opt
-        
-        self.method_mapping = {
-            1: self.loop1,
-            2: self.loop2,
-            3: self.loop3,
-            4: self.loop4,
-        }
-        
+           
         self.re_mapping = {
-            5: re.compile(r'\[\d+\]'),
-            6: re.compile(r"\[^\d]+\]"),
-            7: re.compile(r'\[[^\]]*\]'),
+            5: r'\[\d+\]',
+            6: r'\[^\d]+\]',
+            7: r'\[[^\]]*\]',
+        }
+        self.pattern = re.compile(self.re_mapping.get(self.opt, r'\[.*\]'))
+
+        self.loop_functions = {
+                1: self.loop1,
+                2: self.loop2,
+                3: self.loop3,
+                4: self.loop4
+        }
+
+        self.work_mapping = {
+            5: self.remove,
+            6: self.remove,
+            7: self.remove
         }
         
     def alert_ok(self):
@@ -146,7 +153,6 @@ class Thread(QThread):
             upload_box.send_keys(self.txt_file_path)
             self.driver.execute_script("speciesFileSearch(1, true);")
 
-
             label_data_num = WebDriverWait(self.driver, 10).until(
                 EC.presence_of_element_located((By.XPATH, '//*[@id="content"]/div[5]/span[2]'))
             )
@@ -200,24 +206,15 @@ class Thread(QThread):
     def loop4(self):
         self.title = self.title + self.tab2_input
 
-    def remove(self):
-        self.title = str(self.book_title_box.get_attribute('value'))
+    def insert(self):
+        if not re.search(self.pattern, self.title):
+            self.loop_functions.get(self.opt, lambda: None)()
+
+    def remove(self):        
         matches = self.pattern.findall(self.title)
         if matches:
-            self.book_title_box.clear()
             self.title = re.sub(self.pattern, '', self.title)
             self.title = self.title.strip()
-            self.finish()
-            self.common()
-
-    def loop(self):
-        self.title = str(self.book_title_box.get_attribute('value'))
-        if not re.search(self.pattern, self.title):
-            method_to_call = self.method_mapping.get(self.opt)
-            method_to_call()
-            self.book_title_box.clear()
-            self.finish()
-        self.common()
 
     def run(self):
         self.context.emit("진행중")
@@ -236,29 +233,21 @@ class Thread(QThread):
         self.mark_editor = self.driver.find_element(By.XPATH, '//*[@id="marcEditor"]')
         self.ddc = self.driver.find_element(By.XPATH, '//*[@id="ddc_class"]')
 
-        if self.opt > 4:
-            re_to_call = self.re_mapping.get(self.opt)
-            self.pattern = re_to_call()
-            while True:
-                if self.flag == False:
-                    time.sleep(1)  # 일시정지
+        work_to_call = self.work_mapping.get(self.opt, self.insert)
+
+        while True:
+            if self.flag == False:
+                time.sleep(1)
+            else:
+                if self.val <= self.num:
+                    self.driver.implicitly_wait(2)
+                    self.title = str(self.book_title_box.get_attribute('value'))
+                    self.book_title_box.clear()
+                    work_to_call()
+                    self.finish()
+                    time.sleep(1)
+                    self.common()
+                    self.val += 1
                 else:
-                    if self.val <= self.num:
-                        self.driver.implicitly_wait(2)
-                        self.remove()
-                        self.val += 1
-                    else:
-                        self.context.emit("작업 완료")
-                        return
-        else:
-            while True:
-                if self.flag == False:
-                    time.sleep(1)  # 일시정지
-                else:
-                    if self.val <= self.num:
-                        self.driver.implicitly_wait(2)
-                        self.loop()
-                        self.val += 1
-                    else:
-                        self.context.emit("작업 완료")
-                        return
+                    self.context.emit("작업 완료")
+                    return

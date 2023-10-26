@@ -16,34 +16,6 @@ class Thread(QThread):
     context = pyqtSignal(str)
     error = pyqtSignal(str)
     
-    # stop
-    flag = True
-    
-    # data val
-    num = 0  # 총 자료 개수
-    val = 0  # 현재 자료 위치
-    
-    # Selenium
-    driver = None
-    options = None
-    
-    # elements
-    book_title_box = None
-    save_btn = None
-    next_btn = None
-    syn_tex_box = None
-    mark_editor = None
-
-    ddc = None
-    dup_msg = None
-    dup_btn = None
-
-    # loop option
-    opt = 0
-    col = []
-    pattern = None
-    title = ""
-    
     def __init__(self, id, pw, txt_path, xlsx_path, tab2_input, opt):
         super().__init__()
 
@@ -55,6 +27,16 @@ class Thread(QThread):
         # Selenium option
         self.options = webdriver.ChromeOptions()
         self.options.add_experimental_option("detach", True)
+        self.driver = None
+        
+        # KLAS mark editor elements
+        self.book_title_box = None
+        self.save_btn = None
+        self.next_btn = None
+        self.syn_tex_box = None
+        self.mark_editor = None
+        self.ddc = None
+        self.is_loding = None
         
         # Loop arguments
         self.id = id
@@ -63,26 +45,39 @@ class Thread(QThread):
         self.xlsx_file_path = xlsx_path
         self.tab2_input = tab2_input
         self.opt = opt
-           
-        self.re_mapping = {
+
+        self.title = ""
+        self.num = 0
+        self.val = 0
+        
+        self.pattern = self.get_pattern()
+        self.work_function = self.get_work_function()
+        self.loop_function = self.get_loop_function()
+
+    def get_loop_function(self) :
+        self.loop_functions = {
+            1: self.loop1,
+            2: self.loop2,
+            3: self.loop3,
+            4: self.loop4
+        }
+        return self.loop_functions.get(self.opt)
+
+    def get_pattern(self):
+        re_mapping = {
             5: r'\[\d+\]',
             6: r'\[^\d]+\]',
             7: r'\[[^\]]*\]',
         }
-        self.pattern = re.compile(self.re_mapping.get(self.opt, r'\[.*\]'))
-
-        self.loop_functions = {
-                1: self.loop1,
-                2: self.loop2,
-                3: self.loop3,
-                4: self.loop4
-        }
-
-        self.work_mapping = {
+        return re.compile(re_mapping.get(self.opt, r'\[.*\]'))
+    
+    def get_work_function(self):
+        work_mapping = {
             5: self.remove,
             6: self.remove,
             7: self.remove
         }
+        return work_mapping.get(self.opt, self.insert)
         
     def alert_ok(self):
         try:
@@ -158,7 +153,7 @@ class Thread(QThread):
             )
 
             self.num = re.sub(r'[^0-9]', '', label_data_num.text)
-            self.num = int(self.num) - 1
+            self.num = int(self.num)
 
             select_all_box = WebDriverWait(self.driver, 10).until(
                 EC.presence_of_element_located((By.XPATH, '//*[@id="all_solr_check"]'))
@@ -179,20 +174,10 @@ class Thread(QThread):
             return False
 
     def column_A(self):
-        # 엑셀 파일 열기
         workbook = openpyxl.load_workbook(self.xlsx_file_path)
-
-        # 첫 번째 시트 선택
         worksheet = workbook.active
-
-        # A열의 모든 값을 리스트로 저장
         for cell in worksheet['A']:
             self.col.append(cell.value)
-
-    def finish(self):
-        self.book_title_box.send_keys(self.title)
-        self.book_title_box.send_keys(Keys.ENTER)
-        self.progress.emit(int(self.val * 100 / self.num))
 
     def loop1(self):
         self.title = self.col[self.val] + self.title
@@ -208,7 +193,7 @@ class Thread(QThread):
 
     def insert(self):
         if not re.search(self.pattern, self.title):
-            self.loop_functions.get(self.opt, lambda: None)()
+            self.loop_function()
 
     def remove(self):        
         matches = self.pattern.findall(self.title)
@@ -220,6 +205,7 @@ class Thread(QThread):
         self.context.emit("진행중")
 
         if self.xlsx_file_path != "":
+            self.col = []
             self.column_A()
 
         self.driver = webdriver.Chrome(options=self.options)
@@ -233,21 +219,25 @@ class Thread(QThread):
         self.mark_editor = self.driver.find_element(By.XPATH, '//*[@id="marcEditor"]')
         self.ddc = self.driver.find_element(By.XPATH, '//*[@id="ddc_class"]')
 
-        work_to_call = self.work_mapping.get(self.opt, self.insert)
 
         while True:
             if self.flag == False:
                 time.sleep(1)
             else:
-                if self.val <= self.num:
-                    self.driver.implicitly_wait(2)
+                # 작업완료 elements 의 상태에 따라 continue
+                # element = WebDriverWait(self.driver, 10).until(
+                #     EC.presence_of_element_located(is_loding)
+                # )
+                time.sleep(2)
+                if self.val < self.num:
                     self.title = str(self.book_title_box.get_attribute('value'))
                     self.book_title_box.clear()
-                    work_to_call()
-                    self.finish()
-                    time.sleep(1)
-                    self.common()
+                    self.work_to_call()
+                    self.book_title_box.send_keys(self.title)
+                    self.book_title_box.send_keys(Keys.ENTER)
                     self.val += 1
+                    self.common()
+                    self.progress.emit(int(self.val * 100 / self.num))
                 else:
                     self.context.emit("작업 완료")
-                    return
+                    return 

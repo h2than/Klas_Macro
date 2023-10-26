@@ -82,18 +82,14 @@ class WindowClass(QMainWindow, Ui_MainWindow):
             return False
 
         if self.opt <= 2 :
-            if self.opt == 0 and self.xlsx_path == "" :
+            if self.opt == 0 or self.xlsx_path == "" :
                 self.errormsg(text="옵션을 다시 확인 해주세요")
                 return False  
         elif self.opt <= 4 :
-            if self.opt == 0 and self.tab2_input == "" :
+            if self.opt == 0 or self.tab2_input == "" :
                 self.errormsg(text="옵션을 다시 확인 해주세요")
                 return False
-        else:
-            if self.opt == 0 :
-                self.errormsg(text="옵션을 다시 확인 해주세요")
-                return False
-        
+
         return True
 
     def macro_run(self):
@@ -209,30 +205,54 @@ class WindowClass(QMainWindow, Ui_MainWindow):
         error_box.setWindowTitle("Error")
         error_box.exec_()
     
-    # 일시정지
     def pause(self):
         try:
-            if self.t1.flag :
-                self.t1.flag = False
-                self.label_status.setText("일시정지")
+            if self.mainthread.flag :
+                self.mainthread.flag = False
+                self.label_status.setText("멈춤")
+                self.btn_pause0.setText("재시작")
+                self.btn_pause1.setText("재시작")
+                self.btn_pause2.setText("재시작")
             else:
-                self.t1.flag = True
+                self.mainthread.flag = True
                 self.label_status.setText("진행중")
+                self.btn_pause0.setText("일시정지")
+                self.btn_pause1.setText("일시정지")
+                self.btn_pause2.setText("일시정지")
         except:
             pass
         
     # 강제 종료
     def exit(self):
+        self.mainthread.driver.quit()
+        self.mainthread.flag = False
+        self.mainthread.stop()
         app.quit()
     
     # 스레드 slot
-    
     def state(self, context):
         self.label_status.setText(context)
+        if context == '작업 완료' :
+                self.mainthread.driver.quit()
+                self.mainthread.flag = False
+                self.mainthread.stop()
+            
+                self.btn_start0.setDisabled(False)
+                self.btn_start1.setDisabled(False)
+                self.btn_start2.setDisabled(False)
+                
+                self.tab2_input = ""
+                self.txt_path = ""
+                self.xlsx_path = ""
+                self.opt = 0
+                self.label_top.setText("등록번호")
+                self.label_tab1.setText("Excel file")
+                self.label_tab2.setText("[출판사]")
+                self.label_tab2.setDisabled(False)
+                self.progress_bar.setValue(0)
             
     def onProgress(self, value):
         self.progressBar.setValue(value)
-
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)

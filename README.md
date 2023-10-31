@@ -16,7 +16,7 @@ markup.exe 를 다운로드 및 실행하세요
 
 <img width="80%" src="https://user-images.githubusercontent.com/61488231/235584736-f0e60840-8821-46e6-ae66-993db91de86f.png"/>
 
-오직 KLAS 망에 있는 컴퓨터만 접속 할수 있습니다.
+오직 KLAS 에 접속가능한 환경에서 작동합니다.
 
 <mark style='background-color: #ffdce0'> 프로그램 제일 상단에 등록번호가 한줄씩 담긴 txt 파일을 추가하여 주십시오. </mark>
 

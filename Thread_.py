@@ -66,7 +66,7 @@ class Thread(QThread):
     def get_pattern(self):
         re_mapping = {
             5: r'\[\d+\]',
-            6: r'\[^\d]+\]',
+            6: r'\[(.*?)\]',
             7: r'\[[^\]]*\]',
         }
         return re.compile(re_mapping.get(self.opt, r'\[.*\]'))
@@ -79,24 +79,19 @@ class Thread(QThread):
         }
         return work_mapping.get(self.opt, self.insert)
         
-    def alert_ok(self):
-        try:
-            WebDriverWait(self.driver, 3).until(EC.alert_is_present())
-            alert = self.driver.switch_to.alert
-            alert.accept()
-        except:
-            pass
-
     def common(self):
-        WebDriverWait(self.driver, 10)
-
         ddc_text = str(self.ddc.get_attribute('value'))
         if not ddc_text.isnumeric() and len(ddc_text) > 0:
             self.ddc.clear()
             self.ddc.send_keys(Keys.ENTER)
 
         self.driver.execute_script("arguments[0].click()", self.save_btn)
-        self.alert_ok()
+        try:
+            WebDriverWait(self.driver, 3).until(EC.alert_is_present())
+            alert = self.driver.switch_to.alert
+            alert.accept()
+        except:
+            pass
 
         dup_msg = WebDriverWait(self.driver, 3).until(EC.presence_of_element_located((By.XPATH, '/html/body/div[7]')))
         
@@ -218,25 +213,22 @@ class Thread(QThread):
         self.syn_tex_box = self.driver.find_element(By.XPATH, '//*[@id="syntexMsg_div"]')
         self.mark_editor = self.driver.find_element(By.XPATH, '//*[@id="marcEditor"]')
         self.ddc = self.driver.find_element(By.XPATH, '//*[@id="ddc_class"]')
+        self.is_loding = self.driver.find_element(By.XPATH, '/html/body/div[5]')
 
 
         while True:
             if self.flag == False:
                 time.sleep(1)
             else:
-                # 작업완료 elements 의 상태에 따라 continue
-                # element = WebDriverWait(self.driver, 10).until(
-                #     EC.presence_of_element_located(is_loding)
-                # )
-                time.sleep(2)
                 if self.val < self.num:
                     self.title = str(self.book_title_box.get_attribute('value'))
                     self.book_title_box.clear()
-                    self.work_to_call()
+                    self.work_function()
                     self.book_title_box.send_keys(self.title)
                     self.book_title_box.send_keys(Keys.ENTER)
                     self.val += 1
                     self.common()
+                    WebDriverWait(self.driver, 10).until(EC.invisibility_of_element_located((By.ID, "divLoadingBar")))
                     self.progress.emit(int(self.val * 100 / self.num))
                 else:
                     self.context.emit("작업 완료")

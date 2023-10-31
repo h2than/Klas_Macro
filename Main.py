@@ -3,20 +3,10 @@ import os
 
 from PyQt5.QtWidgets import QMainWindow,QApplication,QFileDialog,QMessageBox,QDialog
 from PyQt5.QtCore import Qt,QDir
-from PyQt5 import uic
 from gui import Ui_MainWindow
 
 from Thread_ import *
 
-# 에러 메세지
-
-# def resource_path(relative_path):
-#     base_path = os.path.join(os.path.dirname(__file__), 'resources')
-#     return os.path.join(base_path, relative_path)
-
-# Ui_MainWindow, _ = uic.loadUiType(resource_path('main.ui'))
-
-# PyQt5 메인 윈도우
 class WindowClass(QMainWindow, Ui_MainWindow):
     
     # 변수
@@ -226,16 +216,15 @@ class WindowClass(QMainWindow, Ui_MainWindow):
     def exit(self):
         self.mainthread.driver.quit()
         self.mainthread.flag = False
-        self.mainthread.stop()
-        app.quit()
-    
+        QApplication.instance().exit()
+
     # 스레드 slot
     def state(self, context):
         self.label_status.setText(context)
         if context == '작업 완료' :
                 self.mainthread.driver.quit()
                 self.mainthread.flag = False
-                self.mainthread.stop()
+                self.mainthread.terminate()
             
                 self.btn_start0.setDisabled(False)
                 self.btn_start1.setDisabled(False)
@@ -249,7 +238,7 @@ class WindowClass(QMainWindow, Ui_MainWindow):
                 self.label_tab1.setText("Excel file")
                 self.label_tab2.setText("[출판사]")
                 self.label_tab2.setDisabled(False)
-                self.progress_bar.setValue(0)
+                self.progressBar.setValue(0)
             
     def onProgress(self, value):
         self.progressBar.setValue(value)
@@ -258,6 +247,6 @@ if __name__ == '__main__':
     app = QApplication(sys.argv)
     myWindow = WindowClass( )
     myWindow.show( )
-    app.exec_( )
+    sys.exit(app.exec_())
 
 # https://github.com/h2than/Klas_Macro.git

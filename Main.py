@@ -216,7 +216,7 @@ class WindowClass(QMainWindow, Ui_MainWindow):
     def exit(self):
         self.mainthread.driver.quit()
         self.mainthread.flag = False
-        self.mainthread.terminate()\
+        self.mainthread.terminate()
         QApplication.instance().exit()
 
     # 스레드 slot

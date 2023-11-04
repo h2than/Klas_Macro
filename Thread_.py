@@ -46,6 +46,7 @@ class Thread(QThread):
         self.xlsx_file_path = xlsx_path
         self.tab2_input = tab2_input
         self.opt = opt
+        self.flag = True
 
         self.title = ""
         self.num = 0

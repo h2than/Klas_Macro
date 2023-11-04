@@ -1,11 +1,10 @@
 import sys
-import os
 
 from PyQt5.QtWidgets import QMainWindow,QApplication,QFileDialog,QMessageBox,QDialog
 from PyQt5.QtCore import Qt,QDir
 from gui import Ui_MainWindow
 
-from Thread_ import *
+from Thread_ import Thread
 
 class WindowClass(QMainWindow, Ui_MainWindow):
     
@@ -90,6 +89,7 @@ class WindowClass(QMainWindow, Ui_MainWindow):
                 self.btn_start2.setDisabled(True)
                 self.mainthread = Thread(id=self.id, pw=self.pw, txt_path=self.txt_path,xlsx_path=self.xlsx_path,tab2_input=self.tab2_input, opt=self.opt)
                 self.mainthread.error.connect(self.errormsg)
+                self.mainthread.reinit.connect(self.re_init)
                 self.mainthread.context.connect(self.state)
                 self.mainthread.progress.connect(self.onProgress)
                 self.mainthread.start()
@@ -212,34 +212,37 @@ class WindowClass(QMainWindow, Ui_MainWindow):
         except:
             pass
         
-    # 강제 종료
-    def exit(self):
+        
+    def stop(self):
         self.mainthread.driver.quit()
         self.mainthread.flag = False
         self.mainthread.terminate()
+        
+    # 강제 종료
+    def exit(self):
+        self.stop()
         QApplication.instance().exit()
+        
+    def re_init(self):
+        self.stop()
+            
+        self.btn_start0.setDisabled(False)
+        self.btn_start1.setDisabled(False)
+        self.btn_start2.setDisabled(False)
+                
+        self.tab2_input = ""
+        self.txt_path = ""
+        self.xlsx_path = ""
+        self.opt = 0
+        self.label_top.setText("등록번호")
+        self.label_tab1.setText("Excel file")
+        self.label_tab2.setText("[출판사]")
+        self.label_tab2.setDisabled(False)
+        self.progressBar.setValue(0)
 
     # 스레드 slot
     def state(self, context):
         self.label_status.setText(context)
-        if context == '작업 완료' :
-                self.mainthread.driver.quit()
-                self.mainthread.flag = False
-                self.mainthread.terminate()
-            
-                self.btn_start0.setDisabled(False)
-                self.btn_start1.setDisabled(False)
-                self.btn_start2.setDisabled(False)
-                
-                self.tab2_input = ""
-                self.txt_path = ""
-                self.xlsx_path = ""
-                self.opt = 0
-                self.label_top.setText("등록번호")
-                self.label_tab1.setText("Excel file")
-                self.label_tab2.setText("[출판사]")
-                self.label_tab2.setDisabled(False)
-                self.progressBar.setValue(0)
             
     def onProgress(self, value):
         self.progressBar.setValue(value)

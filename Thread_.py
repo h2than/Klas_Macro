@@ -15,6 +15,7 @@ class Thread(QThread):
     progress = pyqtSignal(int)
     context = pyqtSignal(str)
     error = pyqtSignal(str)
+    reinit = pyqtSignal()
     
     def __init__(self, id, pw, txt_path, xlsx_path, tab2_input, opt):
         super().__init__()
@@ -118,55 +119,40 @@ class Thread(QThread):
             pass
 
     def klas_upload(self):
-        try:
-            self.driver.get("https://klas.jeonju.go.kr/klas3/Admin/")
-            
-            id_box = self.driver.find_element(By.XPATH, '//*[@id="manager_id"]')
-            id_box.send_keys(self.id)
-            
-            pw_box = self.driver.find_element(By.XPATH, '//*[@id="password"]')
-            pw_box.send_keys(self.pw)
-            
-            self.driver.find_element(By.XPATH, '//*[@id="loginForm"]/article[1]/input[4]').click()
-        except:
-            self.error.emit("KLAS Login Fail")
-            return False
-        
+        self.driver.get("https://klas.jeonju.go.kr/klas3/Admin/")
+        id_box = self.driver.find_element(By.XPATH, '//*[@id="manager_id"]')
+        id_box.send_keys(self.id)
+        pw_box = self.driver.find_element(By.XPATH, '//*[@id="password"]')
+        pw_box.send_keys(self.pw)
+        self.driver.find_element(By.XPATH, '//*[@id="loginForm"]/article[1]/input[4]').click()
+
         # Books Page
-        try:
-            self.driver.get("https://klas.jeonju.go.kr/klas3/Books/booksPage/")
-            self.driver.execute_script("TitleViewChange('file');")
+        self.driver.get("https://klas.jeonju.go.kr/klas3/Books/booksPage/")
+        self.driver.execute_script("TitleViewChange('file');")
 
-            upload_box = WebDriverWait(self.driver, 10).until(
-                EC.presence_of_element_located((By.XPATH, '//*[@id="reg_no_file"]'))
-            )
-            upload_box.send_keys(self.txt_file_path)
-            self.driver.execute_script("speciesFileSearch(1, true);")
+        upload_box = WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.XPATH, '//*[@id="reg_no_file"]'))
+        )
+        upload_box.send_keys(self.txt_file_path)
+        self.driver.execute_script("speciesFileSearch(1, true);")
 
-            label_data_num = WebDriverWait(self.driver, 10).until(
-                EC.presence_of_element_located((By.XPATH, '//*[@id="content"]/div[5]/span[2]'))
-            )
+        label_data_num = WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.XPATH, '//*[@id="content"]/div[5]/span[2]'))
+        )
+        self.num = re.sub(r'[^0-9]', '', label_data_num.text)
+        self.num = int(self.num)
 
-            self.num = re.sub(r'[^0-9]', '', label_data_num.text)
-            self.num = int(self.num)
-
-            select_all_box = WebDriverWait(self.driver, 10).until(
-                EC.presence_of_element_located((By.XPATH, '//*[@id="all_solr_check"]'))
-            )
-            self.driver.execute_script("arguments[0].click()", select_all_box)
-        except:
-            self.error.emit("KLAS file upload Fail")
-            return False
+        select_all_box = WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.XPATH, '//*[@id="all_solr_check"]'))
+        )
+        self.driver.execute_script("arguments[0].click()", select_all_box)
         
-        try:
-            enter_marc_editor_btn = WebDriverWait(self.driver, 10).until(
-                EC.presence_of_element_located((By.XPATH, '//*[@id="content"]/div[8]/div/input[3]'))
-            )
-            self.driver.execute_script("arguments[0].click()", enter_marc_editor_btn)
-            self.driver.switch_to.window(self.driver.window_handles[1])
-        except:
-            self.error.emit("MarkEditor Access Fail")
-            return False
+        enter_marc_editor_btn = WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.XPATH, '//*[@id="content"]/div[8]/div/input[3]'))
+        )
+        self.driver.execute_script("arguments[0].click()", enter_marc_editor_btn)
+        self.driver.switch_to.window(self.driver.window_handles[1])
+
 
     def column_A(self):
         workbook = openpyxl.load_workbook(self.xlsx_file_path)
@@ -203,8 +189,15 @@ class Thread(QThread):
             self.col = []
             self.column_A()
 
-        self.driver = webdriver.Chrome(options=self.options)
-        self.flag = self.klas_upload()
+        try :
+            self.driver = webdriver.Chrome(options=self.options)
+            self.klas_upload()
+        except:
+            self.error.emit("Klas 접속 실패")
+            self.driver.quit()
+            self.context.emit("재시작")
+            self.reinit.emit()
+            return
 
         # enter mark editor tab & find essential elements
         self.book_title_box = WebDriverWait(self.driver, 10).until(EC.presence_of_element_located((By.XPATH, '//*[@id="book_title"]')))
@@ -232,4 +225,5 @@ class Thread(QThread):
                     self.progress.emit(int(self.val * 100 / self.num))
                 else:
                     self.context.emit("작업 완료")
-                    return 
+                    self.reinit.emit()
+                    return

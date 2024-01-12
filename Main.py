@@ -1,7 +1,7 @@
 import sys
 
 from PyQt5.QtWidgets import QMainWindow,QApplication,QFileDialog,QMessageBox,QDialog
-from PyQt5.QtCore import Qt,QDir
+from PyQt5.QtCore import QDir
 from gui import Ui_MainWindow
 
 from Thread_ import Thread

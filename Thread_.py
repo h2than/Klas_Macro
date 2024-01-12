@@ -101,23 +101,22 @@ class Thread(QThread):
             dup_btn = self.driver.find_element(By.XPATH, '//*[@id="confirm_ok"]')
             self.driver.execute_script("arguments[0].click()", dup_btn)
 
-        try:
-            is_error = self.syn_tex_box.find_element(By.TAG_NAME, 'div').text
-            if len(is_error) > 0:
-                divs = self.driver.find_elements(By.XPATH, '//*[@id="marcEditor"]/div')
-                div = divs[-2]
-                fonts = div.find_elements(By.XPATH, './font')
-                Reg_error = fonts[2].find_element(By.XPATH, './pre').text
 
-                desktop = os.path.join(os.path.expanduser('~'), 'Desktop')
-                file_path = os.path.join(desktop, '신텍스 오류 목록.txt')
-                
-                with open(file_path, mode='a', encoding='utf-8') as f:
-                    f.write(f'{Reg_error}\n')
-                self.driver.execute_script("arguments[0].click()", self.next_btn)
-                return
-        except:
-            pass
+        is_error = str(self.syn_tex_box.find_element(By.TAG_NAME, 'div').text)
+        if len(is_error) > 0:
+            divs = self.driver.find_elements(By.XPATH, '//*[@id="marcEditor"]/div')
+            div = divs[-2]
+            fonts = div.find_elements(By.XPATH, './font')
+            Reg_error = fonts[2].find_element(By.XPATH, './pre').text
+
+            desktop = os.path.join(os.path.expanduser('~'), 'Desktop')
+            file_path = os.path.join(desktop, '신텍스 오류 목록.txt')
+            
+            with open(file_path, mode='a', encoding='utf-8') as f:
+                f.write(f'{Reg_error}\n')
+            self.driver.execute_script("arguments[0].click()", self.next_btn)
+            return
+
 
     def klas_upload(self):
         self.driver.get("https://klas.jeonju.go.kr/klas3/Admin/")

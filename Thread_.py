@@ -218,7 +218,6 @@ class Thread(QThread):
                     self.work_function()
                     while str(self.book_title_box.get_attribute('value')) is self.title:
                         self.book_title_box.clear()
-                        self.work_function()
                         self.book_title_box.send_keys(self.title)
                     self.book_title_box.send_keys(Keys.ENTER)
                     self.val += 1

@@ -71,7 +71,7 @@ class Thread(QThread):
             6: r'\[(.*?)\]',
             7: r'\[[^\]]*\]',
         }
-        return re.compile(re_mapping.get(self.opt, r'\[.*\]'))
+        return re.compile(re_mapping.get(self.opt))
     
     def get_work_function(self):
         work_mapping = {
@@ -216,7 +216,7 @@ class Thread(QThread):
                 if self.val < self.num:
                     self.title = str(self.book_title_box.get_attribute('value'))
                     self.work_function()
-                    while str(self.book_title_box.get_attribute('value')) is not self.title:
+                    while str(self.book_title_box.get_attribute('value')) is self.title:
                         self.book_title_box.clear()
                         self.work_function()
                         self.book_title_box.send_keys(self.title)

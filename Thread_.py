@@ -3,7 +3,7 @@ import time
 import openpyxl
 import os
 import chromedriver_autoinstaller
-from PyQt5.QtCore import QThread, pyqtSignal
+from PyQt5.QtCore import Qt,QThread, pyqtSignal
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
@@ -68,10 +68,10 @@ class Thread(QThread):
     def get_pattern(self):
         re_mapping = {
             5: r'\[\d+\]',
-            6: r'\[(.*?)\]',
+            6: r'\[[^\]\d]*\]',
             7: r'\[[^\]]*\]',
         }
-        return re.compile(re_mapping.get(self.opt))
+        return re.compile(re_mapping.get(self.opt,r'.+'))
     
     def get_work_function(self):
         work_mapping = {
@@ -101,21 +101,23 @@ class Thread(QThread):
             dup_btn = self.driver.find_element(By.XPATH, '//*[@id="confirm_ok"]')
             self.driver.execute_script("arguments[0].click()", dup_btn)
 
+        try:
+            is_error = str(self.syn_tex_box.find_element(By.TAG_NAME, 'div').text)
+            if len(is_error) > 0:
+                divs = self.driver.find_elements(By.XPATH, '//*[@id="marcEditor"]/div')
+                div = divs[-2]
+                fonts = div.find_elements(By.XPATH, './font')
+                Reg_error = fonts[2].find_element(By.XPATH, './pre').text
 
-        is_error = str(self.syn_tex_box.find_element(By.TAG_NAME, 'div').text)
-        if len(is_error) > 0:
-            divs = self.driver.find_elements(By.XPATH, '//*[@id="marcEditor"]/div')
-            div = divs[-2]
-            fonts = div.find_elements(By.XPATH, './font')
-            Reg_error = fonts[2].find_element(By.XPATH, './pre').text
-
-            desktop = os.path.join(os.path.expanduser('~'), 'Desktop')
-            file_path = os.path.join(desktop, '신텍스 오류 목록.txt')
-            
-            with open(file_path, mode='a', encoding='utf-8') as f:
-                f.write(f'{Reg_error}\n')
-            self.driver.execute_script("arguments[0].click()", self.next_btn)
-            return
+                desktop = os.path.join(os.path.expanduser('~'), 'Desktop')
+                file_path = os.path.join(desktop, '신텍스 오류 목록.txt')
+                
+                with open(file_path, mode='a', encoding='utf-8') as f:
+                    f.write(f'{Reg_error}\n')
+                self.driver.execute_script("arguments[0].click()", self.next_btn)
+                return
+        except:
+            pass
 
 
     def klas_upload(self):
@@ -182,6 +184,11 @@ class Thread(QThread):
             self.title = re.sub(self.pattern, '', self.title)
             self.title = self.title.strip()
 
+    def title_edit(self):
+        self.book_title_box.clear()
+        self.book_title_box.send_keys(self.title)
+        self.book_title_box.send_keys(Keys.ENTER)
+
     def run(self):
         self.context.emit("진행중")
 
@@ -198,9 +205,9 @@ class Thread(QThread):
             self.context.emit("재시작")
             self.reinit.emit()
             return
-
-        # enter mark editor tab & find essential elements
-        self.book_title_box = WebDriverWait(self.driver, 10).until(EC.presence_of_element_located((By.XPATH, '//*[@id="book_title"]')))
+        WebDriverWait(self.driver, 10)
+        ## enter mark editor tab & find essential elements
+        self.book_title_box = self.driver.find_element(By.XPATH, '//*[@id="book_title"]')
         self.save_btn = self.driver.find_element(By.XPATH, '//*[@id="marcForm"]/div[2]/div[1]/input[18]')
         self.next_btn = self.driver.find_element(By.XPATH, '//*[@id="nextBtn"]')
         self.syn_tex_box = self.driver.find_element(By.XPATH, '//*[@id="syntexMsg_div"]')
@@ -208,18 +215,18 @@ class Thread(QThread):
         self.ddc = self.driver.find_element(By.XPATH, '//*[@id="ddc_class"]')
         self.is_loding = self.driver.find_element(By.XPATH, '/html/body/div[5]')
 
-
         while True:
             if self.flag == False:
                 time.sleep(1)
             else:
                 if self.val < self.num:
-                    self.title = str(self.book_title_box.get_attribute('value'))
+                    self.title = str(self.book_title_box.get_attribute('value')).strip()
                     self.work_function()
-                    while str(self.book_title_box.get_attribute('value')) is self.title:
-                        self.book_title_box.clear()
-                        self.book_title_box.send_keys(self.title)
-                    self.book_title_box.send_keys(Keys.ENTER)
+                    self.title_edit()
+
+                    while str(self.book_title_box.get_attribute('value')).strip() != self.title :
+                        self.title_edit()
+
                     self.val += 1
                     self.common()
                     WebDriverWait(self.driver, 10).until(EC.invisibility_of_element_located((By.ID, "divLoadingBar")))
@@ -228,3 +235,4 @@ class Thread(QThread):
                     self.context.emit("작업 완료")
                     self.reinit.emit()
                     return
+                    
